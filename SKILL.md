@@ -1,4 +1,4 @@
-# /deep-search Command (V123: The Unified Swarm - Core & Vertical Fusion)
+# /deep-search Command (V123.1: The Unified Swarm - Core & Vertical Fusion + Precision Prompts)
 
 This command triggers "Max-Search Mode" (Saturation Search Protocol) for exhaustive, zero-blind-spot research and information gathering. It is governed by strict Ultrawork protocols requiring absolute certainty, manual QA, empirical validation, and active anti-hallucination checks.
 
@@ -19,13 +19,19 @@ Use when the user explicitly requests `/deep-search <topic>`, uses `[search-mode
 ### PHASE 0: Intent Classification & The Unified Core
 Do not rigidly silo the search. All topics (News, Tech, Business) have underlying biases, money flows, and hidden mechanics. 
 Before launching, announce the primary gravity of the search, but deploy a **Unified Swarm**:
-> "Deep-Search Router: 识别到主要 [新闻/代码/商业] 意图，加载通用基座并开启对应垂直增强滤镜。"
+> "Deep-Search Router: 识别到主要 [新闻吃瓜 / 硬核代码 / 深度商业] 意图，加载通用基座并开启对应垂直增强滤镜。"
 
-**Deploy 3-5 OMOC subagents IN PARALLEL (`task(run_in_background=true)`):**
+**Deploy 3-5 OMOC subagents IN PARALLEL (`task(run_in_background=true)`). Combine the Universal agents with your target-specific agents:**
+
+*【Universal Base Agents - ALWAYS RUN】*
 1. **The Global Observer (`librarian`)**: Official docs, macro news, financial indices.
-2. **The Underground OSINT (`librarian`)**: Reddit, HackerNews, Forums. Explicitly instructed to find "complaints", "scams", "bugs", and "deleted posts".
-3. **The Tech/Empirical Validator (`explore` / `bash`)**: FOR ALL SEARCHES involving tech or code, use local scripts (`/tmp/omo-deep-search/`) or AST-grep to empirically validate the claims.
-4. **The Oracle (`oracle`)**: The ultimate pragmatic tear-down agent to decode the flow of money and biases across all modes.
+2. **The Underground OSINT (`librarian`)**: Reddit (`reddit-readonly`), HackerNews, Forums. Explicitly instructed to find "complaints", "scams", "bugs", and "deleted posts".
+3. **The Oracle (`oracle`)**: The ultimate pragmatic tear-down agent to decode the flow of money and biases across all modes.
+
+*【Vertical Enhancers - RUN BASED ON INTENT】*
+- **If News & Drama**: Add `unspecified-high` (Fact-checker) to look for contradictions, deleted tweets, and PR spin across timelines. Set `librarian` filters to `Freshness 24h/week`.
+- **If Code & Tech**: Add `explore` & `ast_grep_search` (Local/Remote repository scanning) and `librarian` (specifically targeting GitHub Issues, PRs, and `Context7`). Add `gsd-codebase-mapper` for architectural paradigms. YOU MUST use `bash` to run empirical validation.
+- **If Business & Domain**: Add `librarian` (Deep Forums) strictly targeting Web3/Crypto scams, hidden fees, and Ponzi structures, plus SEC filings.
 
 ### PHASE 1: OMOC Swarm Orchestration & Tracking (The "No Drift" Rule)
 - **Mandatory Tracking (`todowrite`)**: You MUST log every OMOC subagent fired, its objective, and expected return time.
@@ -69,10 +75,14 @@ Output the final report **DIRECTLY IN THE CHAT WINDOW**. Use plain, direct langu
 - ⚠️ **千万别踩的坑 (Empirically Validated Gotchas)**: [What breaks in production based on actual GitHub Issues or local testing]
 - ✅ **工业级架构选型 (Architecture Positioning)**: [How it compares to alternatives]
 
-*(If the topic involves Business/Products/Drama, include this)*:
+*(If the topic involves Business/Products, include this)*:
 ### 🔪 现实扒皮与崩溃条件 (The Pragmatic Tear-down)
 - ⚖️ **霸王条款与黑盒 (Unfair Rules & Centralization)**: [Hidden fees, fake openness, unfair advantages]
 - 💣 **致命软肋 (Fatal Flaws)**: [触发 X 事件，这个项目/产品/公关就会彻底死掉]
+
+*(If the topic involves News/Drama/Events, include this)*:
+### 🔪 隐藏的反转与真相 (Hidden Truths & Discrepancies)
+- 🔍 **事实核查 (Fact-Check)**: [Point out conflicting evidence, deleted tweets, or PR spin found by fact-checkers]
 
 ---
 
