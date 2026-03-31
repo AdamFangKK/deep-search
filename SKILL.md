@@ -198,18 +198,55 @@ python3 -c "import pdfplumber; ..."
 - ❌ "资料太少" → Expand scope, never truncate
 - ❌ "验证不划算" → Trust No PR is mandatory
 - ❌ "找不到负面信息" → Document search effort
+- ❌ "已经有3个来源了" → **Anti-Convergence: 3 sources is minimum diversity, NOT the goal**
+
+### Anti-Convergence Rule (Critical)
+
+**⚠️ 严禁提前收敛 (Strictly Forbidden: Premature Convergence)**
+
+| 指标 | 常见误区 (❌ 错误) | 正确理解 (✅ 必须) |
+|------|------------------|-------------------|
+| **≥3 sources** | "找到3个来源就停止" | **最少**需要3个来源，**目标**是覆盖尽可能多的来源 |
+| **15-30 data points** | 从3个来源各取5-10点 | 从**≥10个来源**各取1-3点，确保视角多元 |
+| **max 5 per source** | 从3个来源取满5点凑数 | 从**≥10个来源**分散采集，**每个来源不超过5点** |
+
+**Convergence Traps to Avoid**:
+1. ❌ "3个来源 × 5点 = 15点，达标！" → **这是作弊**
+2. ✅ "12个来源 × 1-3点 = 25点" → **这才是目标**
+
+**Rule**: If you find yourself relying heavily on just 3-4 sources, **expand search scope immediately**. Diversity of sources matters more than convenience of collection.
 
 ---
 
 ## Data Quality Standards
 
-| Standard | Requirement |
-|----------|-------------|
-| Quantity | 15-30 data points |
-| Diversity | ≥3 distinct domains |
-| Depth | ≥200 chars per point |
-| Provenance | URL + timestamp required |
-| Recency | 70% from last 2 years |
+| Standard | Requirement | Anti-Convergence Check |
+|----------|-------------|----------------------|
+| **Quantity** | 15-30 data points | Must collect across wide range, not concentrate in few |
+| **Diversity** | ≥10 distinct sources (minimum) | ≥3 is floor, 10+ is target; prevents reliance on convenient sources |
+| **Per-Source Limit** | max 5 points per source | Forces expansion to new sources when limit reached |
+| **Depth** | ≥200 chars per point | Surface skimming not acceptable |
+| **Provenance** | URL + timestamp required | Every point traceable |
+| **Recency** | 70% from last 2 years | Balance of current + historical context |
+
+### Source Distribution Target
+
+**Acceptable** (Anti-Convergence Satisfied):
+```
+25 data points from 12 sources:
+- Source A: 3 points
+- Source B: 2 points  
+- Source C: 2 points
+- Sources D-M: 1-2 points each
+```
+
+**Unacceptable** (Premature Convergence):
+```
+25 data points from 3 sources:
+- Source A: 8 points ❌ (exceeds max 5)
+- Source B: 9 points ❌ (exceeds max 5)  
+- Source C: 8 points ❌ (exceeds max 5)
+```
 
 ---
 
@@ -220,11 +257,13 @@ Before submission, verify:
 ```markdown
 - [ ] 5 agents launched with unique mandates
 - [ ] 15-30 data points collected
-- [ ] ≥3 sources, max 5 per source
+- [ ] ≥10 distinct sources (NOT just ≥3 - this is anti-convergence check)
+- [ ] max 5 points per source (forces source diversity)
 - [ ] All points have URLs + timestamps
 - [ ] Empirical validation complete (if Code/Tech)
 - [ ] Report follows quality-gated structure
 - [ ] No shortcuts taken
+- [ ] Anti-Convergence Rule satisfied (not just 3-4 sources)
 ```
 
 ---
