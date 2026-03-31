@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "search-cluster": {
+      "name": "Search Cluster",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=search-cluster",
+      "source": "skillhub",
+      "version": "3.5.1"
+    },
+    "news-aggregator-skill": {
+      "name": "News Aggregator Skill",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=news-aggregator-skill",
+      "source": "skillhub",
+      "version": "0.1.0"
+    },
+    "academic-deep-research": {
+      "name": "Academic Deep Research",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=academic-deep-research",
+      "source": "skillhub",
+      "version": "1.0.0"
+    }
+  }
+}
