@@ -32,19 +32,45 @@ Use when the user explicitly requests `/deep-search <topic>`, uses `[search-mode
 
 **CRITICAL**: Before launching ANY agents, verify tool availability to prevent "stalling" (wasting tokens on failed tool calls).
 
-**Step 1: Check MCP Tool Health**
+**Step 1: Check Core AI Tools**
 ```bash
-# Check critical MCP tools (with timeout protection)
-echo "=== MCP Tool Health Check ==="
-echo "Testing reddit-readonly..."
-timeout 5 bash -c 'reddit-readonly --version' 2>/dev/null && echo "✅ reddit-readonly OK" || echo "⚠️ reddit-readonly unavailable - will use fallback"
+# Check Exa AI websearch (PRIMARY for Reddit/HN)
+echo "=== Core AI Tools ==="
+echo "✅ websearch_exa - Primary tool for Reddit/HN (via Exa AI)"
+echo "✅ webfetch - Direct URL fetching for Reddit JSON and HN Algolia API"
+```
 
-echo "Testing hacker-news..."
-timeout 5 bash -c 'hn-mcp-server --version' 2>/dev/null && echo "✅ hacker-news OK" || echo "⚠️ hacker-news unavailable - will use fallback"
+**Step 2: Verify System Dependencies**
+```bash
+echo "=== System Dependencies ==="
+which curl && echo "✅ curl available" || echo "❌ curl missing - install with: brew install curl"
+which jq && echo "✅ jq available" || echo "❌ jq missing - install with: brew install jq"
+which git && echo "✅ git available" || echo "❌ git missing"
+```
 
-echo "Testing Context7..."
-# Context7 requires API key check
-if [ -n "$CONTEXT7_API_KEY" ]; then echo "✅ Context7 configured"; else echo "⚠️ Context7 not configured - will use webfetch fallback"; fi
+**Step 3: Document Data Sources**
+在 `todowrite` 中记录：
+```markdown
+- [ ] Tool Health Check Complete
+  - [ ] Reddit Data Source: websearch_exa (STABLE) / webfetch JSON API
+  - [ ] HN Data Source: webfetch Algolia API (STABLE) / websearch_exa
+  - [ ] Code Docs: Context7 / webfetch fallback
+  - [ ] curl: [OK / Missing]
+  - [ ] jq: [OK / Missing]
+```
+
+**Stable Data Source Matrix** (UPDATED for reliability):
+
+| Data Source | Primary Method | API/Endpoint | Reliability |
+|-------------|----------------|--------------|-------------|
+| **Reddit** | `websearch_exa` | Exa AI search with `site:reddit.com` filter | ⭐⭐⭐⭐⭐ |
+| **Reddit (direct)** | `webfetch` | `reddit.com/r/[sub]/comments/[id].json` | ⭐⭐⭐⭐ |
+| **HackerNews** | `webfetch` | `hn.algolia.com/api/v1/search` | ⭐⭐⭐⭐⭐ |
+| **HN (backup)** | `websearch_exa` | Exa AI with `site:news.ycombinator.com` | ⭐⭐⭐⭐⭐ |
+| **Code Docs** | `webfetch` | Official docs / GitHub README | ⭐⭐⭐⭐ |
+| **GitHub** | `grep_app_searchGitHub` | GitHub API | ⭐⭐⭐⭐ |
+
+**⚠️ DEPRECATED**: Reddit MCP (`@yilin-jing/reddit-mcp`) and HN MCP (`hn-mcp-server`) are unreliable and should NOT be used.
 ```
 
 **Step 2: Verify System Dependencies**
@@ -93,26 +119,29 @@ Announce: > "Deep-Search Router: 识别到主要 [新闻/代码/商业] 意图�
    - **Forbidden overlap**: Must NOT search Reddit/HN (that's Underground's job)
    - **Output format**: Structured facts with source URLs + timestamps
 
-2. **The Underground OSINT (`librarian` + fallback tools)**: 
+2. **The Underground OSINT (`librarian` + `websearch_exa`)**: 
    - **Unique mandate**: Reddit, HackerNews, Forums - find "complaints", "scams", "bugs", "deleted posts", "regrets"
-   - **Primary Tools**: 
-     - `reddit-readonly` for Reddit data
-     - `hacker-news` for HN discussions
-   - **Fallback Chain** (if MCP tools fail):
+   - **⚠️ STABILITY NOTE**: Reddit/HN MCP servers are unreliable. Use `websearch_exa` and `webfetch` as PRIMARY tools.
+   - **Primary Tools** (STABLE):
      ```markdown
-     Reddit Fallback:
-     1. `websearch "site:reddit.com/r/[relevant_sub] [topic] complaints"`
-     2. `webfetch` direct Reddit URL (e.g., https://www.reddit.com/r/rust/comments/...)
-     3. `websearch "reddit [topic] problems issues 2024"`
+     Reddit (via Exa AI search - MOST STABLE):
+     - `websearch_exa "site:reddit.com/r/[subreddit] [topic] complaints/problems"`
+     - `websearch_exa "reddit [topic] issues 2024"`
+     - `webfetch "https://www.reddit.com/r/[sub]/comments/[post_id].json"` (for raw data)
      
-     HackerNews Fallback:
-     1. `webfetch "https://hn.algolia.com/api/v1/search?query=[topic]&tags=story"`
-     2. `websearch "site:news.ycombinator.com [topic]"`
-     3. Search for "[topic] site:ycombinator.com" in general search
+     HackerNews (via Algolia API - OFFICIAL & STABLE):
+     - `webfetch "https://hn.algolia.com/api/v1/search?query=[topic]&tags=story&hitsPerPage=20"`
+     - `webfetch "https://hn.algolia.com/api/v1/search?query=[topic]&tags=comment&hitsPerPage=20"` (for discussions)
+     - Fallback: `websearch_exa "site:news.ycombinator.com [topic]"`
      ```
+   - **Search Pattern Library**:
+     | Platform | Complaints | Praise | Technical Discussion |
+     |----------|-----------|--------|---------------------|
+     | Reddit | `"reddit [topic] problems issues"` | `"reddit [topic] recommend"` | `"reddit [topic] vs alternative"` |
+     | HN | `"hn [topic] criticism"` | `"hn [topic] show hn"` | `"hn [topic] ask hn"` |
    - **Anti-gaming rule**: If "no negative info found", MUST document: platforms searched, keywords used, search duration, and hypothesis why
-   - **Tool Failure Protocol**: If all Reddit/HN attempts fail, expand to: Twitter/X complaints, GitHub Issues, Stack Overflow discussions
-   - **Output format**: Raw quotes (≥100 chars each) + source URLs + timestamps + **methodology note** (primary tool vs fallback)
+   - **Backup Sources**: If Reddit/HN yield insufficient data, expand to: Twitter/X advanced search, GitHub Issues, Stack Overflow, Lobste.rs, IndieHackers
+   - **Output format**: Raw quotes (≥100 chars each) + source URLs + timestamps + **data source** (Reddit/HN/Backup)
 
 3. **The Oracle (`oracle`)**: 
    - **Unique mandate**: Decode money flow, biases, hidden incentives
@@ -211,9 +240,9 @@ Announce: > "Deep-Search Router: 识别到主要 [新闻/代码/商业] 意图�
 **Mandatory Tracking (`todowrite`)**:
 ```markdown
 ### Pre-Phase: Tool Health
-- [ ] reddit-readonly MCP: [OK / Fallback Mode / Unavailable]
-- [ ] hacker-news MCP: [OK / Fallback Mode / Unavailable]
-- [ ] Context7: [OK / Fallback Mode / Not Configured]
+- [ ] Reddit Data Source: websearch_exa (STABLE) / webfetch JSON
+- [ ] HN Data Source: webfetch Algolia API (STABLE) / websearch_exa
+- [ ] Context7: [OK / Fallback to webfetch]
 - [ ] System deps (curl, jq): [All OK / Partial / Missing]
 
 ### Agent Deployment
@@ -461,14 +490,20 @@ Announce: > "Deep-Search Router: 识别到主要 [新闻/代码/商业] 意图�
 **Completed**: [Timestamp]
 
 ### Tool Health Summary
-Document any tool failures and fallback usage:
+Document data source usage and any issues:
 ```markdown
-| Tool | Status | Fallback Used | Impact on Results |
-|------|--------|---------------|-------------------|
-| reddit-readonly | [OK/Fail] | [None/websearch/webfetch] | [Minimal/Moderate/Significant] |
-| hacker-news | [OK/Fail] | [None/Algolia API/websearch] | [Minimal/Moderate/Significant] |
-| Context7 | [OK/Fail] | [None/webfetch] | [Minimal/Moderate/Significant] |
-| playwright | [OK/Fail] | [None/curl] | [Minimal/Moderate/Significant] |
+| Data Source | Method Used | Queries/API Calls | Results Quality |
+|-------------|-------------|-------------------|-----------------|
+| Reddit | websearch_exa / webfetch JSON | [List queries] | [High/Medium/Low] |
+| HackerNews | webfetch Algolia API / websearch_exa | [List queries] | [High/Medium/Low] |
+| GitHub | grep_app_searchGitHub / webfetch | [List queries] | [High/Medium/Low] |
+| Official Docs | webfetch / Context7 | [List URLs] | [High/Medium/Low] |
+
+**Data Source Notes**:
+- Reddit: Using Exa AI search (STABLE) - no MCP dependency
+- HN: Using Algolia API (STABLE) - official HN search
+- Total data points collected: [N]
+- Sources diversity: [N] distinct domains
 ```
 ```
 
