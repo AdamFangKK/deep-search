@@ -32,12 +32,16 @@ Use when the user explicitly requests `/deep-search <topic>`, uses `[search-mode
 
 **CRITICAL**: Before launching ANY agents, verify tool availability to prevent "stalling" (wasting tokens on failed tool calls).
 
-**Step 1: Check Core AI Tools**
+**Step 1: Check Core AI Tools & SkillHub Skills**
 ```bash
 # Check Exa AI websearch (PRIMARY for Reddit/HN)
 echo "=== Core AI Tools ==="
 echo "✅ websearch_exa - Primary tool for Reddit/HN (via Exa AI)"
 echo "✅ webfetch - Direct URL fetching for Reddit JSON and HN Algolia API"
+
+echo "=== SkillHub Skills (Enhanced Data Sources) ==="
+# Check if SkillHub skills are available
+ls ~/.agents/skills/ 2>/dev/null | grep -E "search-cluster|news-aggregator|academic-deep-research" && echo "✅ SkillHub skills installed" || echo "⚠️ Some SkillHub skills missing - will use native tools"
 ```
 
 **Step 2: Verify System Dependencies**
@@ -52,25 +56,34 @@ which git && echo "✅ git available" || echo "❌ git missing"
 在 `todowrite` 中记录：
 ```markdown
 - [ ] Tool Health Check Complete
-  - [ ] Reddit Data Source: websearch_exa (STABLE) / webfetch JSON API
-  - [ ] HN Data Source: webfetch Algolia API (STABLE) / websearch_exa
-  - [ ] Code Docs: Context7 / webfetch fallback
-  - [ ] curl: [OK / Missing]
-  - [ ] jq: [OK / Missing]
+  - [ ] Reddit Data Source: search-cluster (PRIMARY) / websearch_exa (FALLBACK)
+  - [ ] HN Data Source: news-aggregator-skill (PRIMARY) / webfetch Algolia API (FALLBACK)
+  - [ ] Academic Source: academic-deep-research (PRIMARY) / websearch (FALLBACK)
+  - [ ] News Source: news-aggregator-skill (PRIMARY) / websearch_exa (FALLBACK)
+  - [ ] Context7: [OK / Fallback to webfetch]
+  - [ ] System deps (curl, jq): [All OK / Partial / Missing]
+  - [ ] SkillHub Skills Available:
+    - [ ] search-cluster: [Installed / Not Installed]
+    - [ ] news-aggregator-skill: [Installed / Not Installed]
+    - [ ] academic-deep-research: [Installed / Not Installed]
 ```
 
-**Stable Data Source Matrix** (UPDATED for reliability):
+**Enhanced Data Source Matrix** (v2.2 with SkillHub Integration):
 
-| Data Source | Primary Method | API/Endpoint | Reliability |
-|-------------|----------------|--------------|-------------|
-| **Reddit** | `websearch_exa` | Exa AI search with `site:reddit.com` filter | ⭐⭐⭐⭐⭐ |
-| **Reddit (direct)** | `webfetch` | `reddit.com/r/[sub]/comments/[id].json` | ⭐⭐⭐⭐ |
-| **HackerNews** | `webfetch` | `hn.algolia.com/api/v1/search` | ⭐⭐⭐⭐⭐ |
-| **HN (backup)** | `websearch_exa` | Exa AI with `site:news.ycombinator.com` | ⭐⭐⭐⭐⭐ |
+| Data Source | Primary Method | Tool/Skill | Reliability |
+|-------------|----------------|------------|-------------|
+| **Reddit** | `search-cluster` | SkillHub (Google, Reddit, Wiki, GNews) | ⭐⭐⭐⭐⭐ |
+| **Reddit (backup)** | `websearch_exa` | Exa AI search with `site:reddit.com` | ⭐⭐⭐⭐⭐ |
+| **Reddit (direct)** | `webfetch` | Reddit JSON API | ⭐⭐⭐⭐ |
+| **HackerNews** | `news-aggregator-skill` | SkillHub (HN + 7 other sources) | ⭐⭐⭐⭐⭐ |
+| **HN (backup)** | `webfetch` | Algolia API | ⭐⭐⭐⭐⭐ |
+| **Academic** | `academic-deep-research` | SkillHub (APA citations, 2-cycle research) | ⭐⭐⭐⭐⭐ |
+| **News** | `news-aggregator-skill` | SkillHub (8-source aggregation) | ⭐⭐⭐⭐⭐ |
 | **Code Docs** | `webfetch` | Official docs / GitHub README | ⭐⭐⭐⭐ |
 | **GitHub** | `grep_app_searchGitHub` | GitHub API | ⭐⭐⭐⭐ |
 
-**⚠️ DEPRECATED**: Reddit MCP (`@yilin-jing/reddit-mcp`) and HN MCP (`hn-mcp-server`) are unreliable and should NOT be used.
+**✅ ENHANCED**: v2.2+ integrates SkillHub skills for maximum coverage and stability.
+**⚠️ DEPRECATED**: Reddit MCP and HN MCP are unreliable and should NOT be used.
 ```
 
 **Step 2: Verify System Dependencies**
@@ -119,29 +132,39 @@ Announce: > "Deep-Search Router: 识别到主要 [新闻/代码/商业] 意图�
    - **Forbidden overlap**: Must NOT search Reddit/HN (that's Underground's job)
    - **Output format**: Structured facts with source URLs + timestamps
 
-2. **The Underground OSINT (`librarian` + `websearch_exa`)**: 
+2. **The Underground OSINT (`librarian` + `search-cluster` + `news-aggregator-skill`)**: 
    - **Unique mandate**: Reddit, HackerNews, Forums - find "complaints", "scams", "bugs", "deleted posts", "regrets"
-   - **⚠️ STABILITY NOTE**: Reddit/HN MCP servers are unreliable. Use `websearch_exa` and `webfetch` as PRIMARY tools.
-   - **Primary Tools** (STABLE):
+   - **⚠️ STABILITY NOTE**: Use SkillHub skills as PRIMARY for maximum coverage and stability.
+   - **Primary Tools** (RECOMMENDED - SkillHub):
      ```markdown
-     Reddit (via Exa AI search - MOST STABLE):
-     - `websearch_exa "site:reddit.com/r/[subreddit] [topic] complaints/problems"`
-     - `websearch_exa "reddit [topic] issues 2024"`
-     - `webfetch "https://www.reddit.com/r/[sub]/comments/[post_id].json"` (for raw data)
+     search-cluster (Multi-provider aggregator):
+     - `search-cluster all "[topic] complaints problems"` (aggregates Google, Reddit, Wiki, GNews)
+     - `search-cluster reddit "[topic]"` (direct Reddit search)
+     - `search-cluster wiki "[topic]"` (Wikipedia context)
      
-     HackerNews (via Algolia API - OFFICIAL & STABLE):
-     - `webfetch "https://hn.algolia.com/api/v1/search?query=[topic]&tags=story&hitsPerPage=20"`
-     - `webfetch "https://hn.algolia.com/api/v1/search?query=[topic]&tags=comment&hitsPerPage=20"` (for discussions)
-     - Fallback: `websearch_exa "site:news.ycombinator.com [topic]"`
+     news-aggregator-skill (8-source aggregator):
+     - `python3 scripts/fetch_news.py --source hackernews --limit 20 --keyword "[topic],issues,problems" --deep`
+     - `python3 scripts/fetch_news.py --source v2ex --limit 15 --keyword "[topic]" --deep` (Chinese dev community)
+     - `python3 scripts/fetch_news.py --source all --limit 10 --keyword "[topic]" --deep` (global scan)
+     ```
+   - **Fallback Tools** (NATIVE - if SkillHub unavailable):
+     ```markdown
+     Reddit (Exa AI):
+     - `websearch_exa "site:reddit.com/r/[subreddit] [topic] complaints/problems"`
+     - `webfetch "https://www.reddit.com/r/[sub]/comments/[post_id].json"`
+     
+     HackerNews (Algolia API):
+     - `webfetch "https://hn.algolia.com/api/v1/search?query=[topic]&tags=story"`
      ```
    - **Search Pattern Library**:
      | Platform | Complaints | Praise | Technical Discussion |
      |----------|-----------|--------|---------------------|
-     | Reddit | `"reddit [topic] problems issues"` | `"reddit [topic] recommend"` | `"reddit [topic] vs alternative"` |
-     | HN | `"hn [topic] criticism"` | `"hn [topic] show hn"` | `"hn [topic] ask hn"` |
+     | Reddit | `"[topic] problems issues"` | `"[topic] recommend"` | `"[topic] vs alternative"` |
+     | HN | `"[topic] criticism"` | `"[topic] show hn"` | `"[topic] ask hn"` |
+     | V2EX | `"[topic] 吐槽"` | `"[topic] 推荐"` | `"[topic] 讨论"` |
    - **Anti-gaming rule**: If "no negative info found", MUST document: platforms searched, keywords used, search duration, and hypothesis why
-   - **Backup Sources**: If Reddit/HN yield insufficient data, expand to: Twitter/X advanced search, GitHub Issues, Stack Overflow, Lobste.rs, IndieHackers
-   - **Output format**: Raw quotes (≥100 chars each) + source URLs + timestamps + **data source** (Reddit/HN/Backup)
+   - **Backup Sources**: Twitter/X, GitHub Issues, Stack Overflow, Lobste.rs, IndieHackers
+   - **Output format**: Raw quotes (≥100 chars) + source URLs + timestamps + **tool used** (search-cluster/news-aggregator/native)
 
 3. **The Oracle (`oracle`)**: 
    - **Unique mandate**: Decode money flow, biases, hidden incentives
@@ -149,6 +172,17 @@ Announce: > "Deep-Search Router: 识别到主要 [新闻/代码/商业] 意图�
    - **Output format**: Causal analysis with evidence chains
 
 *【Vertical Enhancers - BASED ON INTENT】*
+
+**Enhanced with SkillHub Skills** (v2.2+):
+The following SkillHub skills are auto-loaded as enhancements:
+- `search-cluster`: Multi-provider aggregator (Google, Reddit, Wiki, GNews)
+- `news-aggregator-skill`: 8-source news aggregator (HN, 36Kr, 微博, etc.)
+- `academic-deep-research`: Academic-grade research methodology
+
+**Integration Strategy**:
+- Use SkillHub skills as PRIMARY data sources when available
+- Fall back to native tools (websearch_exa, webfetch) if needed
+- Combine outputs for maximum coverage
 
 **Intent Detection Matrix** (Match user query to enhancer):
 
@@ -169,24 +203,62 @@ Announce: > "Deep-Search Router: 识别到主要 [新闻/代码/商业] 意图�
    - **Fallback chain**: Context7 → `webfetch` official docs → `websearch` "[lib] API docs"
    - **Output format**: Code snippets + Issue numbers + architectural insights
 
-5. **The Fact Assassin (`unspecified-high`)**: *[If News/Drama detected]* 
+5. **The Fact Assassin (`news-aggregator-skill` + `unspecified-high`)**: *[If News/Drama detected]* 
    - **Unique mandate**: Find contradictions, deleted content, timeline discrepancies
-   - **Must check**: Wayback Machine for deleted content, fact-check databases
-   - **Output format**: Timeline analysis with timestamped contradictions
+   - **⚡ ENHANCED**: Uses `news-aggregator-skill` for 8-source real-time news aggregation
+   - **Primary Tools** (SkillHub news-aggregator-skill):
+     ```markdown
+     Global News Scan (all 8 sources):
+     - `python3 scripts/fetch_news.py --source all --limit 15 --keyword "[topic],controversy,scandal" --deep`
+     
+     Specific Source Deep Dives:
+     - HN Tech: `python3 scripts/fetch_news.py --source hackernews --limit 20 --keyword "[topic]" --deep`
+     - Chinese Tech: `python3 scripts/fetch_news.py --source 36kr --limit 15 --keyword "[topic]" --deep`
+     - Finance: `python3 scripts/fetch_news.py --source wallstreetcn --limit 10 --keyword "[topic]" --deep`
+     - Social: `python3 scripts/fetch_news.py --source weibo --limit 10 --keyword "[topic]" --deep`
+     
+     Smart Keyword Expansion:
+     - User: "AI" → Use: "AI,LLM,GPT,Claude,Generative,Machine Learning,RAG,Agent,controversy"
+     - User: "scandal" → Use: "scandal,controversy,lawsuit,investigation,accusation"
+     ```
+   - **Fact-Checking Tools**:
+     - Wayback Machine for deleted content
+     - Fact-check databases (Snopes, PolitiFact, etc.)
+     - Cross-reference multiple sources from news-aggregator output
+   - **Output format**: Timeline analysis with timestamped contradictions + source diversity report
 
 6. **The Compliance Auditor (`librarian`)**: *[If Business detected]*
    - **Unique mandate**: SEC filings, hidden fees, Ponzi structures, regulatory actions
    - **Must search**: EDGAR database, regulatory enforcement actions, lawsuit trackers
    - **Output format**: Risk assessment with specific filing numbers and legal citations
 
-7. **The Scholar (`librarian` + websearch)**: *[If Academic detected]* **NEW**
+7. **The Scholar (`academic-deep-research` + `librarian`)**: *[If Academic detected]* **NEW**
    - **Unique mandate**: Academic paper analysis, citation tracking, research trends
-   - **Must search**: arXiv, Google Scholar, Semantic Scholar, PubMed (if health-related)
+   - **⚡ ENHANCED**: Uses `academic-deep-research` SkillHub skill for rigorous methodology
+   - **Primary Approach** (SkillHub academic-deep-research):
+     ```markdown
+     1. **Phase 1**: Initial Engagement - Ask 2-3 clarifying questions about research scope
+     2. **Phase 2**: Research Planning - Present plan with themes, tools, deliverables (STOP for user approval)
+     3. **Phase 3**: Mandated Research Cycles:
+        - Cycle 1: Broad search (web_search count=20) + landscape analysis
+        - Cycle 2: Deep investigation targeting gaps (web_fetch primary sources)
+     4. **Phase 4**: Final Report - APA 7th edition citations, evidence hierarchy, full narrative
+     ```
+   - **Evidence Hierarchy** (from academic-deep-research):
+     1. Systematic reviews & meta-analyses [HIGHEST]
+     2. Randomized controlled trials
+     3. Cohort / longitudinal studies
+     4. Expert consensus / guidelines
+     5. Cross-sectional / observational
+     6. Expert opinion / editorials
+     7. Media reports / blogs [LOWEST]
    - **Key outputs**: 
-     - Most cited papers with citation counts
+     - Most cited papers with citation counts (APA format)
      - Recent breakthrough papers (last 2 years)
      - Controversies or retractions in the field
      - Key researchers and their affiliations
+     - **[NEW]** Evidence quality assessment [HIGH/MEDIUM/LOW/SPECULATIVE]
+     - **[NEW]** Cross-theme synthesis and meta-patterns
    - **Fallback**: If academic DBs unavailable, use `websearch "filetype:pdf [topic] site:arxiv.org"`
 
 8. **The Legal Decoder (`librarian`)**: *[If Legal detected]* **NEW**
