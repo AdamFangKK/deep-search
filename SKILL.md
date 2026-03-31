@@ -39,6 +39,7 @@ Orchestrator (The Conductor)
     ├─ Global Observer (librarian)
     ├─ Underground OSINT (librarian + news-aggregator)
     ├─ Oracle (oracle)
+    ├─ Search Swarm (multi-search-engine) — 17 engines parallel
     ├─ [Vertical Enhancer based on intent]
     └─ Synthesizer (reports)
 ```
@@ -50,6 +51,7 @@ Orchestrator (The Conductor)
 | Global Observer | Universal Base | @references/vertical-enhancers/global-observer.md |
 | Underground OSINT | Universal Base | @references/vertical-enhancers/underground-osint.md |
 | Oracle | Universal Base | @references/vertical-enhancers/oracle.md |
+| **Search Swarm** | **Universal Base** | @references/vertical-enhancers/search-swarm.md |
 | Technical Recon | Vertical | @references/vertical-enhancers/technical-recon.md |
 | Fact Assassin | Vertical | @references/vertical-enhancers/fact-assassin.md |
 | Compliance Auditor | Vertical | @references/vertical-enhancers/compliance-auditor.md |
@@ -59,6 +61,7 @@ Orchestrator (The Conductor)
 
 ### Tool References
 
+- **Multi-Search Engine** (Primary): @references/tools/multi-search.md — 17 search engines (8 CN + 9 Global), zero-config
 - Document Processing: @references/tools/document-processing.md
 - Web Monitoring: @references/tools/web-monitoring.md
 
@@ -99,6 +102,7 @@ The Orchestrator (`unspecified-high`) coordinates:
 
 | Keywords | Intent | Primary Agent | Tools |
 |----------|--------|---------------|-------|
+| **general search, broad query, multi-angle** | **Universal** | **Search Swarm** | **multi-search-engine (17 engines)** |
 | paper, research, arxiv | Academic | The Scholar | academic-deep-research |
 | legal, compliance, GDPR | Legal | Legal Decoder | court records, ToS |
 | hardware, chip, device | Hardware | Hardware Inspector | iFixit, benchmarks |

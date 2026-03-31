@@ -91,7 +91,8 @@ echo "   Install: skillhub install github"
 echo "   Setup: brew install gh"
 echo ""
 echo "✅ Core Skills (REQUIRED):"
-echo " - multi-search-engine (provides websearch_exa) - PRIMARY fallback"
+echo " - multi-search-engine (17 search engines, zero-config) - PRIMARY search tool"
+echo "   Check: ls ~/.agents/skills/multi-search-engine/"
 echo " - ontology"
 echo " - summarize"
 echo ""
@@ -111,5 +112,17 @@ echo " - News: news-aggregator-skill (SkillHub) PRIMARY"
 echo " - GitHub: github skill (gh CLI) + grep_app"
 echo " - Documents: pdf-text-extractor + document-pro"
 echo " - Data Files: parser skill"
+
+# 6. Verify multi-search-engine installation
+echo "🔍 Phase 6: Verifying Multi-Search Engine..."
+if [ -d "$HOME/.agents/skills/multi-search-engine" ]; then
+    echo "✅ multi-search-engine installed"
+    echo "   Engines available: 17 (8 CN + 9 Global)"
+else
+    echo "⚠️ multi-search-engine not found in ~/.agents/skills/"
+    echo "   This is a REQUIRED core skill. Install with:"
+    echo "   skillhub install multi-search-engine"
+    echo "   OR manually clone to ~/.agents/skills/"
+fi
 
 echo "✅ Deep-Search V4 OS environment is armed and operational!"
