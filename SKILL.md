@@ -198,23 +198,75 @@ python3 -c "import pdfplumber; ..."
 - ❌ "资料太少" → Expand scope, never truncate
 - ❌ "验证不划算" → Trust No PR is mandatory
 - ❌ "找不到负面信息" → Document search effort
-- ❌ "已经有3个来源了" → **Anti-Convergence: 3 sources is minimum diversity, NOT the goal**
+- ❌ "已经有5个来源了，够了" → **Anti-Convergence: 5 sources is minimum floor, NOT the ceiling. More is better.**
 
 ### Anti-Convergence Rule (Critical)
 
 **⚠️ 严禁提前收敛 (Strictly Forbidden: Premature Convergence)**
 
+**Minimum Floor**: ≥5 distinct sources (hard requirement)  
+**Recommended**: 8-15 sources (depending on topic scope)  
+**Ceiling**: None (more diverse sources = better coverage)
+
 | 指标 | 常见误区 (❌ 错误) | 正确理解 (✅ 必须) |
 |------|------------------|-------------------|
-| **≥3 sources** | "找到3个来源就停止" | **最少**需要3个来源，**目标**是覆盖尽可能多的来源 |
-| **15-30 data points** | 从3个来源各取5-10点 | 从**≥10个来源**各取1-3点，确保视角多元 |
-| **max 5 per source** | 从3个来源取满5点凑数 | 从**≥10个来源**分散采集，**每个来源不超过5点** |
+| **≥5 sources** | "找到5个来源就停止，刚好达标" | **最少**需要5个来源，**上不封顶**，越多越好 |
+| **15-30 data points** | 从3个来源各取5-10点 | 从**≥5个来源**（推荐更多）分散采集，确保视角多元 |
+| **max 5 per source** | 从少数来源取满5点凑数 | 达到5点后必须扩展到新来源，**不能深耕单一来源** |
+
+### Real-World Examples
+
+**Example 1: Narrow Scope (Minimum Acceptable)**
+```
+Query: "今天硅谷科技圈新闻"
+Scope: Single day, specific geography, tech-only
+
+Minimum Output:
+- TechCrunch: 3 news items
+- The Verge: 3 news items
+- HackerNews: 3 discussions
+- Twitter/X Tech: 3 tweets/posts
+- Reddit r/tech: 3 posts
+
+Total: 5 sources, 15 data points ✅
+Note: This meets minimum. Can expand to 8-10 sources for better coverage.
+```
+
+**Example 2: Standard Scope (Recommended)**
+```
+Query: "React 19新特性分析"
+Scope: Technical feature review
+
+Recommended Output:
+- React官方文档: 3 points
+- GitHub PRs/Issues: 3 points
+- HackerNews讨论: 2 points
+- Reddit r/reactjs: 2 points
+- Dev.to/ Medium: 2 points
+- YouTube技术博主: 2 points
+- Twitter工程师: 2 points
+- Stack Overflow: 2 points
+
+Total: 8 sources, 18 data points ✅
+```
+
+**Example 3: Broad Scope (Maximum)**
+```
+Query: "AI行业2024年度回顾"
+Scope: Industry-wide comprehensive analysis
+
+Maximum Output:
+- 12-15 sources
+- 25-30 data points
+- Academic papers + Industry reports + News + Community + Code repos
+```
 
 **Convergence Traps to Avoid**:
-1. ❌ "3个来源 × 5点 = 15点，达标！" → **这是作弊**
-2. ✅ "12个来源 × 1-3点 = 25点" → **这才是目标**
+1. ❌ "5个来源 × 3点 = 15点，刚好达标，停！" → **过早收敛**
+2. ✅ "5个来源 × 3点 = 15点，已达最低要求，继续扩展到8-10来源" → **正确做法**
+3. ✅ "10个来源 × 2-3点 = 25点，全面覆盖" → **理想状态**
 
-**Rule**: If you find yourself relying heavily on just 3-4 sources, **expand search scope immediately**. Diversity of sources matters more than convenience of collection.
+**Rule**: ≥5 sources is the hard floor. For narrow topics, 5 quality sources is acceptable. For comprehensive topics, expand to 10+. Never exceed 5 points per source.
 
 ---
 
@@ -223,7 +275,7 @@ python3 -c "import pdfplumber; ..."
 | Standard | Requirement | Anti-Convergence Check |
 |----------|-------------|----------------------|
 | **Quantity** | 15-30 data points | Must collect across wide range, not concentrate in few |
-| **Diversity** | ≥10 distinct sources (minimum) | ≥3 is floor, 10+ is target; prevents reliance on convenient sources |
+| **Diversity** | **≥5 distinct sources (minimum)** | 5 is floor, 10+ recommended; prevents reliance on convenient sources |
 | **Per-Source Limit** | max 5 points per source | Forces expansion to new sources when limit reached |
 | **Depth** | ≥200 chars per point | Surface skimming not acceptable |
 | **Provenance** | URL + timestamp required | Every point traceable |
@@ -231,13 +283,25 @@ python3 -c "import pdfplumber; ..."
 
 ### Source Distribution Target
 
-**Acceptable** (Anti-Convergence Satisfied):
+**Minimum Acceptable** (Small Scope Topics):
 ```
-25 data points from 12 sources:
+Example: "今天硅谷科技圈新闻"
+15 data points from 5 sources:
+- TechCrunch: 3 points
+- The Verge: 3 points  
+- HackerNews: 3 points
+- Twitter/X: 3 points
+- Reddit r/tech: 3 points
+Total: 15 points ✅ (minimum met, can expand to 30)
+```
+
+**Recommended** (Standard Topics):
+```
+25 data points from 10 sources:
 - Source A: 3 points
 - Source B: 2 points  
 - Source C: 2 points
-- Sources D-M: 1-2 points each
+- Sources D-M: 1-3 points each
 ```
 
 **Unacceptable** (Premature Convergence):
@@ -248,6 +312,8 @@ python3 -c "import pdfplumber; ..."
 - Source C: 8 points ❌ (exceeds max 5)
 ```
 
+**Rule**: ≥5 sources minimum, but more is better. Never exceed 5 points per source.
+
 ---
 
 ## Compliance Verification
@@ -257,14 +323,24 @@ Before submission, verify:
 ```markdown
 - [ ] 5 agents launched with unique mandates
 - [ ] 15-30 data points collected
-- [ ] ≥10 distinct sources (NOT just ≥3 - this is anti-convergence check)
+- [ ] ≥5 distinct sources (minimum floor, 10+ recommended for broad topics)
 - [ ] max 5 points per source (forces source diversity)
 - [ ] All points have URLs + timestamps
 - [ ] Empirical validation complete (if Code/Tech)
 - [ ] Report follows quality-gated structure
 - [ ] No shortcuts taken
-- [ ] Anti-Convergence Rule satisfied (not just 3-4 sources)
+- [ ] Anti-Convergence Rule satisfied (≥5 sources, but more is better)
 ```
+
+### Scope-Based Source Requirements
+
+| Topic Scope | Example | Min Sources | Target Sources | Max Points |
+|-------------|---------|-------------|----------------|------------|
+| **Narrow** | "今天硅谷科技圈新闻" | 5 | 5-8 | 15-20 |
+| **Standard** | "React vs Vue对比" | 5 | 8-12 | 20-25 |
+| **Broad** | "AI行业2024年度回顾" | 5 | 12-17 | 25-30 |
+
+**Key**: 5 sources is the hard floor. For narrow/time-sensitive topics, 5 quality sources with 15 points is acceptable. For comprehensive topics, expand to 10+ sources.
 
 ---
 

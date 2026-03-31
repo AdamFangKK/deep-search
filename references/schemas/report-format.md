@@ -17,27 +17,76 @@ This document defines the complete report format. SKILL.md provides the executio
 
 ## Anti-Convergence Principle
 
-**This report format assumes wide source diversity. Do NOT converge prematurely.**
+**This report format requires source diversity. Do NOT converge prematurely.**
 
-### The Trap
+### The Core Rule
+- **Hard Floor**: ≥5 distinct sources (minimum requirement)
+- **Recommended**: 8-15 sources (depending on topic scope)  
+- **Ceiling**: None (more diverse sources = better coverage)
+- **Max per source**: 5 points (forces expansion to new sources)
+
+### Scope-Based Flexibility
+
+| Topic Scope | Example | Min Sources | Target Sources | Data Points |
+|-------------|---------|-------------|----------------|-------------|
+| **Narrow** | "今天硅谷科技圈新闻" | 5 | 5-8 | 15-20 |
+| **Standard** | "React 19新特性分析" | 5 | 8-12 | 20-25 |
+| **Broad** | "AI行业2024年度回顾" | 5 | 12-17 | 25-30 |
+
+### Real-World Examples
+
+**Example 1: Narrow Scope (Minimum Acceptable)**
+```
+Query: "今天硅谷科技圈新闻"
+Scope: Single day, specific geography, tech-only
+
+Output:
+- TechCrunch (3 news items)
+- The Verge (3 news items)
+- HackerNews (3 discussions)
+- Twitter/X Tech (3 posts)
+- Reddit r/tech (3 posts)
+
+Total: 5 sources × 3 points = 15 data points ✅
+Note: Meets minimum. Can expand to 8-10 sources for better coverage.
+```
+
+**Example 2: Standard Scope (Recommended)**
+```
+Query: "React 19新特性分析"
+Sources: React docs, GitHub, HN, Reddit, Dev.to, YouTube, Twitter, Stack Overflow
+Total: 8 sources, 18-20 data points ✅
+```
+
+**Example 3: Broad Scope (Maximum)**
+```
+Query: "AI行业2024年度回顾"
+Sources: 12-15 sources across academics, industry reports, news, community, code
+Total: 25-30 data points ✅
+```
+
+### The Traps to Avoid
+
 ❌ **Wrong**: "I have 3 sources with 8-9 points each = 25 points. Done!"
+- Violates: max 5 per source
+- Violates: minimum 5 sources
 
-✅ **Correct**: "I have 15 sources with 1-3 points each = 25 points. Comprehensive!"
+❌ **Wrong**: "I have 5 sources, exactly 3 points each = 15 points. Stop here!"
+- Meets minimum but may lack depth for standard/broad topics
+- For narrow topics: acceptable
+- For standard/broad topics: expand to 8+ sources
 
-### Source Distribution Requirements
+✅ **Correct (Narrow)**: "I have 5 sources × 3 points = 15 points. For today's news, this is comprehensive."
 
-| Metric | Minimum | Target | Maximum Per Source |
-|--------|---------|--------|-------------------|
-| Total data points | 15 | 20-25 | — |
-| Distinct sources | 10 | 12+ | — |
-| Points per source | 1 | 2-3 | 5 |
+✅ **Correct (Standard/Broad)**: "I have 10 sources × 2-3 points = 25 points. Well-distributed coverage."
 
 ### Warning Signs of Premature Convergence
 
 Check your source list. If you see:
+- [ ] <5 sources (violates minimum)
 - [ ] 3-4 sources dominating (>70% of points)
 - [ ] Any single source with >5 points
-- [ ] All sources from same domain (e.g., only tech blogs)
+- [ ] All sources from same domain
 
 **Action**: Expand search immediately. Launch additional agents.
 
@@ -50,12 +99,12 @@ Before finalizing, verify in Section 4 (Empirical Evidence):
 |------|---------|------|------|--------|
 | 1 | [...] | A | [...] | HIGH |
 | 2 | [...] | B | [...] | HIGH |
-| 3 | [...] | C | [...] | MEDIUM |
-| ...| [...] | D | [...] | HIGH |
-| 25 | [...] | M | [...] | MEDIUM |
+| ...| [...] | ... | [...] | ... |
+| 15 | [...] | E | [...] | MEDIUM |
 
-Source diversity: A, B, C, D, E, F, G, H, I, J, K, L, M (13 sources) ✅
+Source diversity: A, B, C, D, E (5 sources minimum) ✅
 Max per source: 3 points ✅
+Scope-appropriate: Narrow topic, 5 sources sufficient ✅
 ```
 
 ---
