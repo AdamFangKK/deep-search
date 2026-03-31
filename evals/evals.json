@@ -1,0 +1,77 @@
+{
+  "skill_name": "deep-search",
+  "description": "Evaluation test cases for deep-search skill v3.0",
+  "version": "3.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "tech-stack-comparison",
+      "prompt": "Deep search: Compare React vs Vue for enterprise applications in 2024. Focus on community feedback, performance, and real-world pain points.",
+      "expected_output": "Comprehensive comparison with Reddit/HN community feedback, benchmark data, and documented pain points",
+      "assertions": [
+        "Contains community feedback from Reddit or HN",
+        "Includes performance benchmarks",
+        "Documents real complaints/issues",
+        "Has ≥3 data sources",
+        "Includes empirical validation"
+      ],
+      "category": "Tech Comparison"
+    },
+    {
+      "id": 2,
+      "name": "academic-research-llm",
+      "prompt": "Research: Latest LLM safety and alignment research papers from 2023-2024. Need academic rigor with citations.",
+      "expected_output": "Academic-grade analysis with APA citations, evidence hierarchy, and methodology validation",
+      "assertions": [
+        "APA 7th edition citations present",
+        "Evidence hierarchy followed",
+        "≥10 papers referenced",
+        "Systematic review methodology",
+        "Confidence annotations [HIGH/MEDIUM/LOW]"
+      ],
+      "category": "Academic Research"
+    },
+    {
+      "id": 3,
+      "name": "business-due-diligence",
+      "prompt": "Due diligence analysis of Stripe as a payment processor. Look for hidden fees, regulatory issues, and customer complaints.",
+      "expected_output": "Risk assessment with specific fee structures, regulatory status, and customer feedback",
+      "assertions": [
+        "Fee structure documented",
+        "Regulatory status checked",
+        "Customer complaints found",
+        "Risk rating provided",
+        "Mitigation strategies listed"
+      ],
+      "category": "Business Analysis"
+    },
+    {
+      "id": 4,
+      "name": "hardware-review",
+      "prompt": "Deep analysis of Apple M3 MacBook Pro. Need teardown info, benchmarks, and repairability assessment.",
+      "expected_output": "Component breakdown, performance benchmarks, and repairability score",
+      "assertions": [
+        "Component breakdown present",
+        "Benchmark data included",
+        "Repairability score (iFixit)",
+        "Supply chain analysis",
+        "Thermal/power analysis"
+      ],
+      "category": "Hardware Analysis"
+    },
+    {
+      "id": 5,
+      "name": "breaking-news-verification",
+      "prompt": "Verify claims about recent OpenAI GPT-5 announcement. Check multiple sources for contradictions.",
+      "expected_output": "Timeline analysis with timestamped contradictions and fact-checking",
+      "assertions": [
+        "Multiple sources checked",
+        "Timeline with timestamps",
+        "Contradictions identified",
+        "Fact-check sources cited",
+        "Confidence level stated"
+      ],
+      "category": "News Verification"
+    }
+  ]
+}
