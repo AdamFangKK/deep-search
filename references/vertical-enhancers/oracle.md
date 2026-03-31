@@ -16,6 +16,34 @@ Decode hidden incentives and power structures:
 
 ---
 
+## Two-Layer Tool Stack
+
+### Primary Layer (Analysis Core)
+**Tool**: `oracle` agent (reasoning-only, no external search)
+- Synthesizes findings from other agents
+- Detects logical fallacies and bias patterns
+- Maps stakeholder incentives
+
+### Base Layer (Context Gathering)
+**Tool**: `multi-search-engine` (17 engines)
+- **Purpose**: Gather broad context on stakeholders, funding history, market position
+- **Activation**: When analyzing a company/topic, first use multi-search-engine for background
+- **Complements**: Other agents' specialized findings provide depth, multi-search-engine provides breadth
+
+```bash
+# Base layer: Broad context gathering
+bash ~/.agents/skills/deep-search/scripts/swarm-search.sh "[company] funding history investors" general
+bash ~/.agents/skills/deep-search/scripts/swarm-search.sh "[topic] controversy bias criticism" general
+
+# Primary layer: Analysis (internal reasoning)
+# Oracle synthesizes findings from:
+# - Global Observer (official stance)
+# - Underground OSINT (community sentiment)
+# - Base layer (broad context)
+```
+
+---
+
 ## Key Questions
 
 1. "Who profits from this?"
@@ -35,7 +63,7 @@ Decode hidden incentives and power structures:
 
 ### Money Flow
 - Revenue sources: [list]
-- Funding history: [list]
+- Funding history: [list - from Base Layer]
 - Conflicts of interest: [list]
 
 ### Bias Indicators
@@ -47,18 +75,19 @@ Decode hidden incentives and power structures:
 
 ---
 
-## Tools & Commands
+## Collaboration Pattern
 
-```bash
-# Funding and investment
-websearch_exa "[topic/company] funding investment Crunchbase"
+**Receives from**:
+- Global Observer: Official narratives and institutional positions
+- Underground OSINT: Community sentiment and grassroots complaints
+- Vertical Enhancers: Domain-specific findings
 
-# Executive/board analysis
-websearch_exa "[company] CEO board directors background"
+**Base Layer provides**:
+- Broad funding/investment context
+- Historical controversy patterns
+- Cross-engine narrative validation
 
-# Conflict of interest
-websearch_exa "[topic] sponsored research conflict of interest"
-```
+**Output**: Synthesis revealing hidden incentives and biases
 
 ---
 
@@ -69,6 +98,18 @@ Causal analysis with evidence chains:
 ## Incentive Analysis
 **Claim**: [X is motivated by Y]
 **Evidence**: [Source with quote]
+**Base Layer Context**: [Broad funding/market findings from multi-search-engine]
 **Chain**: A → B → C → Outcome
 **Confidence**: [HIGH/MEDIUM/LOW]
 ```
+
+---
+
+## Why Two Layers?
+
+| Layer | Role | Example |
+|-------|------|---------|
+| **Primary** (Analysis) | "Connect the dots" | "Funding from X creates incentive to downplay Y" |
+| **Base** (multi-search-engine) | "Get all the dots" | "X has received $50M from Z investors (found across 3 engines)" |
+
+**Result**: Broad context + Deep analysis = Complete incentive map

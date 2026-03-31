@@ -55,19 +55,23 @@ Orchestrator (The Conductor)
 
 ### Agent Reference Docs
 
-| Agent | Type | Reference | Core Tools |
-|-------|------|-----------|------------|
-| Global Observer | Universal Base | @references/vertical-enhancers/global-observer.md | multi-search-engine (17 engines) |
-| Underground OSINT | Universal Base | @references/vertical-enhancers/underground-osint.md | websearch_exa + news-aggregator |
-| Oracle | Universal Base | @references/vertical-enhancers/oracle.md | N/A (analysis only) |
-| Technical Recon | Vertical | @references/vertical-enhancers/technical-recon.md | explore + ast_grep + github |
-| Fact Assassin | Vertical | @references/vertical-enhancers/fact-assassin.md | news-aggregator + multi-search-engine |
-| Compliance Auditor | Vertical | @references/vertical-enhancers/compliance-auditor.md | SEC filings + websearch |
-| The Scholar | Vertical | @references/vertical-enhancers/scholar.md | academic-deep-research |
-| Legal Decoder | Vertical | @references/vertical-enhancers/legal-decoder.md | Court records + ToS |
-| Hardware Inspector | Vertical | @references/vertical-enhancers/hardware-inspector.md | iFixit + benchmarks |
+| Agent | Type | Reference | Primary Layer (Depth) | Base Layer (Breadth) |
+|-------|------|-----------|----------------------|---------------------|
+| **Global Observer** | Universal Base | @references/vertical-enhancers/global-observer.md | multi-search-engine (17 engines) | — |
+| **Underground OSINT** | Universal Base | @references/vertical-enhancers/underground-osint.md | websearch_exa + news-aggregator (Reddit/HN) | multi-search-engine (forum expansion) |
+| **Oracle** | Universal Base | @references/vertical-enhancers/oracle.md | oracle (analysis) | multi-search-engine (context gathering) |
+| **Technical Recon** | Vertical | @references/vertical-enhancers/technical-recon.md | explore + ast_grep + github (code deep) | multi-search-engine (ecosystem news) |
+| **The Scholar** | Vertical | @references/vertical-enhancers/scholar.md | academic-deep-research (papers) | multi-search-engine (general context) |
+| **Fact Assassin** | Vertical | @references/vertical-enhancers/fact-assassin.md | news-aggregator (curated news) | multi-search-engine (cross-validation) |
+| **Compliance Auditor** | Vertical | @references/vertical-enhancers/compliance-auditor.md | SEC filings + websearch_exa (financials) | multi-search-engine (market sentiment) |
+| **Legal Decoder** | Vertical | @references/vertical-enhancers/legal-decoder.md | Court records + ToS (legal docs) | multi-search-engine (regulatory news) |
+| **Hardware Inspector** | Vertical | @references/vertical-enhancers/hardware-inspector.md | iFixit + benchmarks (teardowns) | multi-search-engine (reviews/reliability) |
 
-**Tool Assignment Principle**: Each agent uses the BEST tool for their mandate — no duplication, no competition.
+**Two-Layer Architecture**:
+- **Primary Layer**: Domain-specific tools (irreplaceable depth)
+- **Base Layer**: multi-search-engine (universal breadth, cross-validation)
+- **Result**: Every agent has specialized expertise + comprehensive coverage
+- **Exception**: Global Observer is pure universal (only needs Base layer)
 
 ### Tool References
 
@@ -123,22 +127,26 @@ The Orchestrator (`unspecified-high`) coordinates:
    - Gate 5: Report Structure
    - Gate 6: Anti-Gaming Check
 
-### Intent Detection Matrix
+### Intent Detection Matrix (Two-Layer Architecture)
 
-| Keywords | Intent | Primary Agent | Specialized Tools | Base Tools |
-|----------|--------|---------------|-------------------|------------|
-| paper, research, arxiv | Academic | The Scholar | academic-deep-research | multi-search-engine |
-| legal, compliance, GDPR | Legal | Legal Decoder | Court records, ToS | multi-search-engine |
-| hardware, chip, device | Hardware | Hardware Inspector | iFixit, benchmarks | multi-search-engine |
-| repo, library, API | Code/Tech | Technical Recon | explore, ast_grep, github | multi-search-engine |
-| breaking news, scandal | News/Drama | Fact Assassin | news-aggregator | multi-search-engine |
-| startup, funding, SEC | Business | Compliance Auditor | SEC filings | multi-search-engine |
-| **general query, broad topic** | **Universal** | **Global Observer** | — | **multi-search-engine** |
+| Keywords | Intent | Primary Agent | Primary Layer (Depth) | Base Layer (Breadth) |
+|----------|--------|---------------|----------------------|---------------------|
+| paper, research, arxiv | Academic | The Scholar | academic-deep-research (papers, citations) | multi-search-engine (general context) |
+| legal, compliance, GDPR | Legal | Legal Decoder | Court records, ToS (legal docs) | multi-search-engine (regulatory news) |
+| hardware, chip, device | Hardware | Hardware Inspector | iFixit, benchmarks (teardowns) | multi-search-engine (reviews, reliability) |
+| repo, library, API | Code/Tech | Technical Recon | explore, ast_grep, github (code deep) | multi-search-engine (ecosystem news) |
+| breaking news, scandal | News/Drama | Fact Assassin | news-aggregator (curated news) | multi-search-engine (cross-validation) |
+| startup, funding, SEC | Business | Compliance Auditor | SEC filings (financials) | multi-search-engine (market sentiment) |
+| **general query, broad topic** | **Universal** | **Global Observer** | — | **multi-search-engine (17 engines)** |
+| community, complaints, reddit | Grassroots | Underground OSINT | websearch_exa + news-aggregator (Reddit/HN) | multi-search-engine (forum expansion) |
+| incentives, bias, stakeholders | Analysis | Oracle | oracle (reasoning) | multi-search-engine (context gathering) |
 
-**Tool Layering**:
-- **Specialized Tools**: Domain-specific,不可替代 (academic, SEC filings, court records)
-- **Base Tools**: `multi-search-engine` provides universal coverage for ALL agents as fallback/filler
-- **Result**: Specialized depth + Universal breadth = Complete coverage
+**Two-Layer Execution**:
+1. **Primary Layer executes first** — domain-specific deep dive
+2. **Base Layer activates** — cross-validation, gap filling, context expansion
+3. **Results merge** — specialized depth + universal breadth = complete answer
+
+**Universal Coverage Guarantee**: Every agent has access to 17 search engines for validation and context.
 
 ### PHASE 1-4: Agent Execution
 
