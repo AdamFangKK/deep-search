@@ -36,32 +36,57 @@ bash ~/.agents/skills/deep-search/scripts/check-tools.sh
 
 ```
 Orchestrator (The Conductor)
-    ├─ Global Observer (librarian)
+    ├─ Global Observer (librarian + multi-search-engine)
+    │   └─ Broad web coverage + official sources
     ├─ Underground OSINT (librarian + news-aggregator)
+    │   └─ Reddit + HN + forums (community voices)
     ├─ Oracle (oracle)
-    ├─ Search Swarm (multi-search-engine) — 17 engines parallel
+    │   └─ Bias detection + incentive analysis
     ├─ [Vertical Enhancer based on intent]
+    │   └─ Domain-specific deep dive
     └─ Synthesizer (reports)
+        └─ Cross-source validation & aggregation
 ```
+
+**Complementary Design**:
+- **Global Observer** uses `multi-search-engine` for **broad web coverage** (blogs, news sites, official docs)
+- **Underground OSINT** uses `websearch_exa` + `news-aggregator` for **community discussions** (Reddit, HN, forums)
+- They work TOGETHER, not competing — different data layers
 
 ### Agent Reference Docs
 
-| Agent | Type | Reference |
-|-------|------|-----------|
-| Global Observer | Universal Base | @references/vertical-enhancers/global-observer.md |
-| Underground OSINT | Universal Base | @references/vertical-enhancers/underground-osint.md |
-| Oracle | Universal Base | @references/vertical-enhancers/oracle.md |
-| **Search Swarm** | **Universal Base** | @references/vertical-enhancers/search-swarm.md |
-| Technical Recon | Vertical | @references/vertical-enhancers/technical-recon.md |
-| Fact Assassin | Vertical | @references/vertical-enhancers/fact-assassin.md |
-| Compliance Auditor | Vertical | @references/vertical-enhancers/compliance-auditor.md |
-| The Scholar | Vertical | @references/vertical-enhancers/scholar.md |
-| Legal Decoder | Vertical | @references/vertical-enhancers/legal-decoder.md |
-| Hardware Inspector | Vertical | @references/vertical-enhancers/hardware-inspector.md |
+| Agent | Type | Reference | Core Tools |
+|-------|------|-----------|------------|
+| Global Observer | Universal Base | @references/vertical-enhancers/global-observer.md | multi-search-engine (17 engines) |
+| Underground OSINT | Universal Base | @references/vertical-enhancers/underground-osint.md | websearch_exa + news-aggregator |
+| Oracle | Universal Base | @references/vertical-enhancers/oracle.md | N/A (analysis only) |
+| Technical Recon | Vertical | @references/vertical-enhancers/technical-recon.md | explore + ast_grep + github |
+| Fact Assassin | Vertical | @references/vertical-enhancers/fact-assassin.md | news-aggregator + multi-search-engine |
+| Compliance Auditor | Vertical | @references/vertical-enhancers/compliance-auditor.md | SEC filings + websearch |
+| The Scholar | Vertical | @references/vertical-enhancers/scholar.md | academic-deep-research |
+| Legal Decoder | Vertical | @references/vertical-enhancers/legal-decoder.md | Court records + ToS |
+| Hardware Inspector | Vertical | @references/vertical-enhancers/hardware-inspector.md | iFixit + benchmarks |
+
+**Tool Assignment Principle**: Each agent uses the BEST tool for their mandate — no duplication, no competition.
 
 ### Tool References
 
-- **Multi-Search Engine** (Primary): @references/tools/multi-search.md — 17 search engines (8 CN + 9 Global), zero-config
+#### Universal Search Layer (Broad Coverage)
+- **Multi-Search Engine**: @references/tools/multi-search.md — 17 engines for general web search
+  - Use for: Background research, cross-engine validation, filling coverage gaps
+  - Complements (NOT replaces) specialized sources below
+
+#### Specialized Data Sources (Domain Deep Dives)
+| Source | Tool/Skill | Best For | Why Not Replaceable |
+|--------|-----------|----------|-------------------|
+| **Reddit** | `websearch_exa` | Community discussions, user complaints | Authentic grassroots voices |
+| **HackerNews** | `news-aggregator-skill` | Tech/startup discourse | High signal-to-noise ratio |
+| **Academic** | `academic-deep-research` | Papers, citations, peer review | Structured academic data |
+| **News** | `news-aggregator-skill` | Breaking news, journalist reports | Editorial curation |
+| **GitHub** | `github` | Code repos, issues, PRs | Developer artifacts |
+| **Documents** | `pdf-text-extractor` | PDFs, structured data | Non-web content |
+
+#### Utility Tools
 - Document Processing: @references/tools/document-processing.md
 - Web Monitoring: @references/tools/web-monitoring.md
 
@@ -100,15 +125,20 @@ The Orchestrator (`unspecified-high`) coordinates:
 
 ### Intent Detection Matrix
 
-| Keywords | Intent | Primary Agent | Tools |
-|----------|--------|---------------|-------|
-| **general search, broad query, multi-angle** | **Universal** | **Search Swarm** | **multi-search-engine (17 engines)** |
-| paper, research, arxiv | Academic | The Scholar | academic-deep-research |
-| legal, compliance, GDPR | Legal | Legal Decoder | court records, ToS |
-| hardware, chip, device | Hardware | Hardware Inspector | iFixit, benchmarks |
-| repo, library, API | Code/Tech | Technical Recon | explore, ast_grep, github |
-| breaking news, scandal | News/Drama | Fact Assassin | news-aggregator |
-| startup, funding, SEC | Business | Compliance Auditor | SEC filings |
+| Keywords | Intent | Primary Agent | Specialized Tools | Base Tools |
+|----------|--------|---------------|-------------------|------------|
+| paper, research, arxiv | Academic | The Scholar | academic-deep-research | multi-search-engine |
+| legal, compliance, GDPR | Legal | Legal Decoder | Court records, ToS | multi-search-engine |
+| hardware, chip, device | Hardware | Hardware Inspector | iFixit, benchmarks | multi-search-engine |
+| repo, library, API | Code/Tech | Technical Recon | explore, ast_grep, github | multi-search-engine |
+| breaking news, scandal | News/Drama | Fact Assassin | news-aggregator | multi-search-engine |
+| startup, funding, SEC | Business | Compliance Auditor | SEC filings | multi-search-engine |
+| **general query, broad topic** | **Universal** | **Global Observer** | — | **multi-search-engine** |
+
+**Tool Layering**:
+- **Specialized Tools**: Domain-specific,不可替代 (academic, SEC filings, court records)
+- **Base Tools**: `multi-search-engine` provides universal coverage for ALL agents as fallback/filler
+- **Result**: Specialized depth + Universal breadth = Complete coverage
 
 ### PHASE 1-4: Agent Execution
 

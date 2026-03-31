@@ -16,6 +16,27 @@ Find "raw truth" from community sources:
 
 ---
 
+## Collaboration with Global Observer
+
+**Complementary Design**:
+
+| Agent | Data Layer | Sources | Question Answered |
+|-------|-----------|---------|-------------------|
+| **Global Observer** | Institutional | multi-search-engine (17 engines) | "What do they OFFICIALLY say?" |
+| **Underground OSINT** | Grassroots | Reddit, HN, forums | "What do USERS actually experience?" |
+
+**Workflow**:
+1. Global Observer researches official sources → Identifies gaps
+2. Underground OSINT fills gaps with community voices
+3. **Both required** — institutional + grassroots = complete picture
+
+**Example**:
+- Global Observer: "Product X claims 99% uptime (official docs)"
+- Underground OSINT: "Reddit users report weekly outages (r/sysadmin)"
+- Combined: Official claim vs. reality
+
+---
+
 ## Primary Tools (SkillHub - RECOMMENDED)
 
 ```bash

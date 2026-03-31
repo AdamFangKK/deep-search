@@ -7,7 +7,48 @@ Integration of 17 search engines for comprehensive web crawling without API keys
 **Source**: `@multi-search-engine`  
 **Engines**: 17 (8 Domestic CN + 9 International)  
 **Config**: Zero-config, no API keys required  
-**Primary Use**: Broad topic search, cross-engine validation, anti-censorship redundancy
+**Primary Use**: Broad topic search, cross-engine validation, filling coverage gaps
+
+---
+
+## Position in Deep-Search Ecosystem
+
+**NOT a replacement** — **A complementary layer**:
+
+```
+Deep-Search Data Stack
+├── Universal Layer (YOU ARE HERE)
+│   └── multi-search-engine — Broad web coverage
+│       (news, blogs, official docs, general web)
+│
+├── Community Layer
+│   ├── Reddit → websearch_exa
+│   ├── HN → news-aggregator-skill
+│   └── Forums → websearch_exa
+│
+├── Academic Layer
+│   └── academic-deep-research
+│
+├── Code Layer
+│   └── github
+│
+└── Document Layer
+    └── pdf-text-extractor
+```
+
+**When to use multi-search-engine**:
+- ✅ Quick background research
+- ✅ Cross-engine validation ("Is this true across sources?")
+- ✅ Filling gaps Reddit/HN don't cover
+- ✅ Official sources, news, blogs
+
+**When NOT to use** (use specialized tools instead):
+- ❌ Deep community discussions → Use websearch_exa (Reddit)
+- ❌ Academic papers → Use academic-deep-research
+- ❌ GitHub repos → Use github skill
+- ❌ PDF documents → Use pdf-text-extractor
+
+**The Rule**: Use the RIGHT tool for each data layer — they work TOGETHER.
 
 ---
 
