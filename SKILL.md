@@ -1,10 +1,64 @@
 ---
 name: deep-search
 description: Use when the user explicitly requests /deep-search <topic>, uses [search-mode] MAXIMIZE SEARCH EFFORT, or requires deep, multi-faceted research with exhaustive coverage and empirical validation. Triggers saturation search protocol with 5+ specialized agents.
-version: 3.0.0
+version: 4.0.0
 ---
 
-# /deep-search Command (v3.0: Architecturally Optimized)
+# /deep-search Command (v4.0: Executable Architecture)
+
+## 🚀 执行入口
+
+**当用户请求 deep-search 时，执行以下步骤：**
+
+1. **加载执行器**: 读取 `DEEP_SEARCH.md` - 这是实际的执行入口点
+2. **启动 5-Agent Swarm**: 按照 DEEP_SEARCH.md 中的指令并行启动代理
+3. **渐进式披露**: 执行 Layer 1 → Layer 2 → Layer 3 的数据流
+4. **生成报告**: 输出 8-section 专业报告
+
+**注意**: SKILL.md 是设计文档，DEEP_SEARCH.md 是执行代码。OpenCode 在调用 skill 时会自动处理此流程。
+
+---
+
+## ⚠️ 重要：代理启动方式
+
+**必须使用 `category` 参数，不要使用 `subagent_type`**
+
+```typescript
+// ✅ 正确用法 - 使用 category
+task({
+  category: "quick",  // 或 "deep", "ultrabrain", "artistry" 等
+  load_skills: ["multi-search-engine"],
+  run_in_background: true,
+  prompt: "..."
+});
+
+// ❌ 错误用法 - subagent_type 会导致代理死锁
+// task({
+//   subagent_type: "librarian",  // 千万不要用！
+//   ...
+// });
+```
+
+**原因**: `subagent_type` 参数会导致子代理初始化死锁，无法完成任何任务。`category` 参数是正确且唯一可用的方式。
+
+---
+
+## 快速开始
+
+```bash
+# Setup
+bash ~/.agents/skills/deep-search/setup.sh
+
+# Check environment
+bash ~/.agents/skills/deep-search/scripts/check-tools.sh
+
+# Run deep search (通过 OpenCode 调用)
+# /deep-search "your research topic"
+```
+
+---
+
+# /deep-search Command (v4.0: Architecturally Optimized)
 
 This command triggers "Max-Search Mode" (Saturation Search Protocol) for exhaustive, zero-blind-spot research governed by strict Ultrawork protocols.
 
@@ -363,6 +417,12 @@ Schemas: @evals/schemas.md
 
 ## Version History
 
+- **v4.0.0 - Executable Skill Architecture** 🆕
+  - 创建 `DEEP_SEARCH.md` - 可执行的 5-Agent Swarm 协调器
+  - 修复依赖技能路径（符号链接到主 skills 目录）
+  - 实现渐进式披露的数据流（Layer 1→2→3）
+  - 添加任务分发与结果收集机制
+  - SKILL.md 作为设计文档，DEEP_SEARCH.md 作为执行入口
 - v3.2.0 - Professional output format: Executive Summary, Methodology, Multi-perspective Analysis, Confidence Assessment
 - v3.1.0 - Perfect Organic Collaboration: Two-layer architecture (Primary + Base) for all agents
 - v3.0.0 - Architecturally optimized with progressive disclosure

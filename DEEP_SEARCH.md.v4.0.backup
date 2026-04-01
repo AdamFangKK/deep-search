@@ -1,0 +1,430 @@
+---
+name: deep-search-executor
+description: Deep Search 的可执行入口 - 5-Agent Swarm 协调器，实现渐进式披露架构
+version: 4.0.0
+---
+
+# Deep Search Executor (v4.0)
+
+**执行入口**: 当用户调用 `/deep-search <topic>` 时，OpenCode 加载此文件并执行其中的指令。
+
+**核心架构**: 5-Agent Swarm + 渐进式披露 (Progressive Disclosure)
+
+---
+
+## 执行流程 (Execution Flow)
+
+```
+PHASE 0: Intent Analysis (当前 Agent - Orchestrator)
+    ↓
+PHASE 1: Layer 1 - Foundation (并行)
+    ├─ Global Observer (librarian + multi-search-engine)
+    └─ Underground OSINT (librarian + news-aggregator-skill)
+    ↓
+PHASE 2: Layer 2 - Analysis (基于 Layer 1 结果)
+    ├─ Oracle (oracle) - 偏见检测与激励分析
+    └─ Vertical Enhancer (基于意图选择)
+    ↓
+PHASE 3: Layer 3 - Synthesis
+    └─ Synthesizer (当前 Agent) - 结果整合与报告生成
+    ↓
+PHASE 4: Final Deliverable
+    └─ 8- Section Professional Report
+```
+
+---
+
+## 渐进式披露实现
+
+### Layer 1: Foundation (基础层)
+**目标**: 收集原始数据，建立信息基线
+**并行度**: 2 个代理同时运行
+**质量门**: 每个代理 ≥5 个来源，≥10 个数据点
+
+### Layer 2: Analysis (分析层)
+**目标**: 基于 Layer 1 发现进行深度分析
+**依赖**: 必须等待 Layer 1 完成
+**并行度**: 1-2 个代理（根据意图）
+
+### Layer 3: Synthesis (合成层)
+**目标**: 整合所有信息，生成最终报告
+**依赖**: 等待所有 Layer 2 完成
+**执行者**: Orchestrator (当前 Agent)
+
+---
+
+## 指令执行块 (INSTRUCTION BLOCK)
+
+当此文件被加载时，按顺序执行以下操作：
+
+### STEP 1: 解析查询
+从用户输入中提取：
+- `{{topic}}`: 研究主题
+- `{{intent}}`: 意图分类 (academic/technical/news/business/legal/hardware/general)
+
+### STEP 2: 启动 Layer 1 (Foundation)
+
+使用 `task()` 并行启动以下 2 个代理：
+
+```typescript
+// Agent 1: Global Observer
+const task1 = task({
+  category: "deep",
+  load_skills: ["multi-search-engine", "websearch_web_search_exa"],
+  run_in_background: true,
+  description: "Global Observer - Broad web coverage",
+  prompt: `
+## CONTEXT
+你是 Deep Search 的 Global Observer 代理。
+研究主题: "{{topic}}"
+
+## YOUR MANDATE
+使用 multi-search-engine 和 websearch_web_search_exa 进行广泛网络覆盖：
+1. 官方文档和网站
+2. 新闻文章和博客
+3. 一般网络上下文
+
+## TWO-LAYER EXECUTION
+**Primary Layer (深度)**:
+- 使用 multi-search-engine 在多个引擎上搜索 "{{topic}}"
+- 目标是官方来源、文档、新闻
+
+**Base Layer (广度)**:
+- 使用 websearch_web_search_exa 补充特定站点搜索
+
+## QUALITY GATES
+- 最少 10 个数据点
+- 覆盖 ≥3 个引擎（交叉验证）
+- 至少 2 个官方来源
+- 明确标记 coverage_gaps（交给 Underground OSINT 补充）
+
+## OUTPUT FORMAT
+返回 JSON 格式：
+{
+  "agent": "global-observer",
+  "query": "{{topic}}",
+  "engines_used": ["..."],
+  "results": [{"title": "...", "url": "...", "source_type": "...", "confidence": "..."}],
+  "coverage_gaps": ["reddit", "hn", "forums"],
+  "official_stance": "...",
+  "news_narrative": "..."
+}
+
+## ANTI-GAMING RULES
+- ❌ 不接受"时间紧迫"作为借口
+- ❌ 不接受"资料太少"作为借口
+- ✅ 必须达到最少数据点要求
+`
+});
+
+// Agent 2: Underground OSINT
+const task2 = task({
+  category: "deep",
+  load_skills: ["news-aggregator-skill", "websearch_web_search_exa"],
+  run_in_background: true,
+  description: "Underground OSINT - Community voices",
+  prompt: `
+## CONTEXT
+你是 Deep Search 的 Underground OSINT 代理。
+研究主题: "{{topic}}"
+
+## YOUR MANDATE
+从社区来源找到"原始真相"：
+1. Reddit 投诉、诈骗、Bug
+2. HackerNews 讨论
+3. 论坛帖子和被删除的内容
+4. 用户遗憾和负面体验
+
+## TWO-LAYER EXECUTION
+**Primary Layer (深度)**:
+- Reddit: websearch_web_search_exa "site:reddit.com {{topic}} complaints problems"
+- HN: news-aggregator-skill --source hackernews
+- V2EX: news-aggregator-skill --source v2ex
+
+**Base Layer (广度)**:
+- 如果 Reddit/HN 覆盖不足，使用多引擎搜索论坛讨论
+
+## QUALITY GATES
+- 最少 8 个社区来源的数据点
+- 每个来源注明情感和投票数
+- 明确标记常见投诉和好评
+
+## OUTPUT FORMAT
+返回结构化 Markdown：
+
+## Community Intelligence (Primary Layer)
+
+### Reddit Insights (r/[subreddit])
+- [Quote ≥100 chars with URL]
+  **Sentiment**: [Complaint/Praise/Neutral]
+  **Votes**: [N] | **Comments**: [N]
+
+### HackerNews Insights
+- [Quote ≥100 chars with URL]
+  **Score**: [N] | **Comments**: [N]
+
+### V2EX Insights (如适用)
+- [中文社区的见解]
+
+## Community Consensus
+- **Primary sentiment**: [Positive/Negative/Mixed]
+- **Common complaints**: [List]
+- **Coverage gaps**: [What communities are silent?]
+
+## ANTI-GAMING RULES
+- ❌ 如果"没有找到负面信息"，必须记录搜索努力
+- ✅ 必须文档化搜索的平台和关键词
+`
+});
+```
+
+### STEP 3: 等待 Layer 1 完成并收集结果
+
+等待 `task1` 和 `task2` 完成，使用 `background_output()` 收集结果。
+
+**数据验证**:
+- 检查每个代理的结果是否符合质量门
+- 如果不符合，标记为 incomplete 并要求补充
+
+### STEP 4: 启动 Layer 2 (Analysis)
+
+基于 Layer 1 的结果和意图分类，启动 Layer 2 代理。
+
+**意图检测矩阵**:
+
+| Keywords | Intent | Layer 2 Agent |
+|----------|--------|---------------|
+| paper, research, arxiv | Academic | The Scholar |
+| legal, compliance, GDPR | Legal | Legal Decoder |
+| hardware, chip, device | Hardware | Hardware Inspector |
+| repo, library, API | Code/Tech | Technical Recon |
+| breaking news, scandal | News/Drama | Fact Assassin |
+| startup, funding, SEC | Business | Compliance Auditor |
+| community, complaints | Grassroots | (已在 Layer 1 完成) |
+| incentives, bias, stakeholders | Analysis | Oracle |
+| general query | Universal | Oracle |
+
+```typescript
+// Agent 3: Oracle (总是运行)
+const task3 = task({
+  category: "ultrabrain",
+  load_skills: [],
+  run_in_background: true,
+  description: "Oracle - Bias detection and incentive analysis",
+  prompt: `
+## CONTEXT
+你是 Deep Search 的 Oracle 代理。
+研究主题: "{{topic}}"
+
+## INPUT FROM LAYER 1
+{{layer1_results}}
+
+## YOUR MANDATE
+解码隐藏的激励和权力结构：
+1. 资金流分析
+2. 偏见检测
+3. 隐藏议程识别
+4. 利益相关者映射
+
+## KEY QUESTIONS
+1. "谁从中获利？"
+2. "谁付出代价？"
+3. "隐藏的议程是什么？"
+4. "谁从错误信息中受益？"
+
+## ANALYSIS FRAMEWORK
+### Stakeholder Analysis
+| Stakeholder | Interest | Influence | Position |
+|-------------|----------|-----------|----------|
+| [Name] | [What they want] | [High/Med/Low] | [Pro/Con/Neutral] |
+
+### Money Flow
+- 收入来源: [list]
+- 融资历史: [list]
+- 利益冲突: [list]
+
+### Bias Indicators
+- [ ] 资金来源已披露？
+- [ ] 研究是否受赞助？
+- [ ] 作者所属机构？
+- [ ] 历史立场？
+
+## OUTPUT FORMAT
+返回因果分析与证据链：
+
+## Incentive Analysis
+**Claim**: [X is motivated by Y]
+**Evidence**: [Source with quote]
+**Chain**: A → B → C → Outcome
+**Confidence**: [HIGH/MEDIUM/LOW]
+
+## Stakeholder Map
+[完整的利益相关者分析]
+
+## Bias Assessment
+[偏见检测结论]
+`
+});
+
+// Agent 4: Vertical Enhancer (基于意图)
+const verticalAgent = getVerticalEnhancer("{{intent}}");
+if (verticalAgent) {
+  const task4 = task({
+    category: verticalAgent.category,
+    load_skills: verticalAgent.skills,
+    run_in_background: true,
+    description: `${verticalAgent.name} - Domain-specific deep dive`,
+    prompt: verticalAgent.promptTemplate
+  });
+}
+```
+
+### STEP 5: 等待 Layer 2 完成
+
+等待 `task3` 和（如果启动的）`task4` 完成。
+
+### STEP 6: Layer 3 - Synthesis (合成层)
+
+Orchestrator (当前 Agent) 整合所有结果，生成最终报告。
+
+**8-Section Report Structure**:
+
+```markdown
+# ⚡ Deep-Search: [Topic] 全景分析报告
+**生成时间**: [Timestamp] | **数据点**: [N] | **来源域**: [N] | **整体置信度**: [HIGH/MEDIUM/LOW]
+
+## 1. 执行摘要 (Executive Summary)
+- 核心结论（3-5 个 bullet points）
+- 多视角评估
+- P0 建议
+
+## 2. 研究方法 (Methodology)
+- 搜索范围
+- 数据质量标准
+- 局限性声明
+
+## 3. 全景分析 (Universal Analysis)
+- 时间线
+- 多源对比
+- 利益相关方
+
+## 4. 实证数据 (Empirical Evidence)
+- 来自 Layer 1 的关键引用
+- 验证记录
+
+## 5. 垂直分析 (Domain Analysis)
+- 基于意图的特定分析框架
+
+## 6. 综合评估 (Synthesis)
+- 关键判断
+- 备选解释
+- 信息缺口
+
+## 7. 行动建议 (Recommendations)
+- P0/P1/P2 优先级矩阵
+
+## 8. 附录 (Appendices)
+- 数据来源
+- 置信度标准
+- 术语表
+```
+
+### STEP 7: 合规验证
+
+在提交前验证：
+
+```markdown
+- [ ] 5 个代理已启动（或根据意图的最小集合）
+- [ ] 15-30 个数据点已收集
+- [ ] ≥5 个不同来源（最少底线，广泛主题推荐 10+）
+- [ ] 每个来源最多 5 个点（强制来源多样性）
+- [ ] 所有点都有 URL + 时间戳
+- [ ] 实证验证完成（如 Code/Tech）
+- [ ] 报告遵循质量门控结构
+- [ ] 没有走捷径
+- [ ] 反收敛规则已满足
+```
+
+### STEP 8: 输出最终报告
+
+向用户呈现完整的 8-section 报告。
+
+---
+
+## 渐进式披露的数据流
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Layer 1: Foundation                                         │
+│ ├─ Global Observer: 官方立场、新闻叙述                      │
+│ └─ Underground OSINT: 社区声音、用户经验                    │
+│ Output: Raw Data + Coverage Gaps                            │
+└───────────────────────┬─────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Layer 2: Analysis                                           │
+│ ├─ Oracle: 基于 Layer 1 的偏见和激励分析                    │
+│ └─ Vertical Enhancer: 领域特定深度分析                      │
+│ Output: Insights + Validation                               │
+└───────────────────────┬─────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Layer 3: Synthesis                                          │
+│ └─ Synthesizer: 整合所有层，生成报告                        │
+│ Output: Professional 8-Section Report                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 依赖技能配置
+
+此 Executor 依赖以下技能（必须在 load_skills 中包含）：
+
+### 必需技能 (Required)
+- `multi-search-engine` - 17 引擎搜索
+
+### 条件技能 (Conditional - 基于意图)
+- `news-aggregator-skill` - HN, V2EX 等社区
+- `academic-deep-research` - 学术研究
+- `github` - 代码仓库分析
+- `pdf-text-extractor` - PDF 处理
+
+---
+
+## 反收敛规则 (Anti-Convergence Rule)
+
+**⚠️ 严禁提前收敛**
+
+| 指标 | 要求 |
+|------|------|
+| **最少来源** | ≥5 个不同来源（底线） |
+| **推荐来源** | 8-15 个来源（取决于主题范围） |
+| **每个来源上限** | 最多 5 个点 |
+| **数据点总数** | 15-30 个点 |
+| **深度** | 每个点 ≥200 字符 |
+| **来源** | URL + 时间戳 |
+
+**错误示例**:
+```
+❌ 25 个点来自 3 个来源（每个来源 8-9 点）
+```
+
+**正确示例**:
+```
+✅ 15 个点来自 5 个来源（每个来源 3 点）- 最低可接受
+✅ 25 个点来自 10 个来源（每个来源 2-3 点）- 理想状态
+```
+
+---
+
+## 版本历史
+
+- v4.0.0 - 可执行 Skill 架构，实现 5-Agent Swarm 和渐进式披露
+- v3.2.0 - 专业输出格式
+- v3.1.0 - 双层架构（Primary + Base）
+- v3.0.0 - 架构优化
+
+---
+
+**执行指令**: 当此文件被加载时，从 STEP 1 开始按顺序执行上述所有步骤。
