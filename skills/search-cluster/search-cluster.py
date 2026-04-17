@@ -20,7 +20,23 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 SCRAPLING_PYTHON = os.getenv("SCRAPLING_PYTHON_PATH", "python3")
 # Corrected: Script is now in the same directory as this file
 STEALTH_SCRIPT = os.path.join(os.path.dirname(__file__), "stealth_fetch.py")
-USER_AGENT = os.getenv("SEARCH_USER_AGENT", "SearchCluster/3.5.1")
+# A browser-like UA is required by Google/Reddit/DDG to return real content.
+# The previous default ("SearchCluster/3.5.1") was blocked by most providers.
+USER_AGENT = os.getenv(
+    "SEARCH_USER_AGENT",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+)
+# Debug flag: when set, emit per-provider failure reasons to stderr so upstream
+# agents can distinguish "no results" from "provider unreachable".
+DEBUG = os.getenv("SEARCH_CLUSTER_DEBUG", "1") not in ("0", "false", "False", "")
+# Stores last-run provider errors so --source all can include them in output.
+_PROVIDER_ERRORS = {}
+
+def _log_err(provider, err):
+    _PROVIDER_ERRORS[provider] = str(err)
+    if DEBUG:
+        print(f"[search-cluster] {provider} failed: {err}", file=sys.stderr)
 
 def internal_sanitize(text):
     if not text: return ""
@@ -67,7 +83,9 @@ def wiki_search(query):
                     })
             if results: redis_set(cache_key, json.dumps(results))
             return results
-    except: return []
+    except Exception as e:
+        _log_err("wiki", e)
+        return []
 
 def reddit_search(query):
     cache_key = f"search:reddit:{hashlib.md5(query.encode()).hexdigest()}"
@@ -91,7 +109,11 @@ def reddit_search(query):
                     })
             if results: redis_set(cache_key, json.dumps(results))
             return results
-    except: return []
+    except Exception as e:
+        # Reddit's unauthenticated JSON endpoint is frequently blocked (HTTP 403/HTML bot wall).
+        # Surface the failure rather than silently returning [].
+        _log_err("reddit", e)
+        return []
 
 def scrapling_search(query):
     if not os.path.exists(SCRAPLING_PYTHON) or not os.path.exists(STEALTH_SCRIPT):
@@ -103,8 +125,19 @@ def scrapling_search(query):
             for item in data:
                 item["snippet"] = internal_sanitize(item.get("snippet", ""))
             return data
-    except: pass
+        else:
+            _log_err("scrapling", f"exit={result.returncode} stderr={result.stderr[:200]}")
+    except Exception as e:
+        _log_err("scrapling", e)
     return []
+
+def _strip_html(html_text):
+    if not html_text:
+        return ""
+    # Remove tags without pulling in a dependency; good enough for RSS snippets.
+    text = re.sub(r"<[^>]+>", " ", html_text)
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 def gnews_search(query):
     url = f"https://news.google.com/rss/search?q={urllib.parse.quote(query)}&hl=en-US&gl=US&ceid=US:en"
@@ -115,14 +148,25 @@ def gnews_search(query):
             root = ET.fromstring(response.read())
             results = []
             for item in root.findall(".//item")[:10]:
+                title_el = item.find("title")
+                link_el = item.find("link")
+                desc_el = item.find("description")
+                pub_el = item.find("pubDate")
+                # description usually contains HTML with source list; extract plain text.
+                snippet = _strip_html(desc_el.text) if desc_el is not None and desc_el.text else ""
+                if not snippet:
+                    snippet = "Google News RSS item"
                 results.append({
                     "source": "gnews",
-                    "title": internal_sanitize(item.find("title").text),
-                    "link": item.find("link").text,
-                    "snippet": "Latest News via Google RSS"
+                    "title": internal_sanitize(title_el.text) if title_el is not None else "",
+                    "link": link_el.text if link_el is not None else "",
+                    "snippet": internal_sanitize(snippet)[:500],
+                    "published": pub_el.text if pub_el is not None else ""
                 })
             return results
-    except: return []
+    except Exception as e:
+        _log_err("gnews", e)
+        return []
 
 def google_search(query):
     if not GOOGLE_API_KEY or not GOOGLE_CSE_ID: return []
@@ -141,21 +185,39 @@ def google_search(query):
                     "snippet": internal_sanitize(item.get("snippet", ""))
                 })
             return results
-    except: return []
+    except Exception as e:
+        _log_err("google", e)
+        return []
 
 def search_all(query):
     results = []
+    providers = {
+        "google": google_search,
+        "wiki": wiki_search,
+        "reddit": reddit_search,
+        "gnews": gnews_search,
+        "scrapling": scrapling_search,
+    }
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-        futures = {
-            executor.submit(google_search, query): "google",
-            executor.submit(wiki_search, query): "wiki",
-            executor.submit(reddit_search, query): "reddit",
-            executor.submit(gnews_search, query): "gnews",
-            executor.submit(scrapling_search, query): "scrapling"
-        }
+        futures = {executor.submit(fn, query): name for name, fn in providers.items()}
+        per_provider_counts = {name: 0 for name in providers}
         for f in concurrent.futures.as_completed(futures):
-            try: results.extend(f.result())
-            except: pass
+            name = futures[f]
+            try:
+                r = f.result() or []
+                per_provider_counts[name] = len(r)
+                results.extend(r)
+            except Exception as e:
+                _log_err(name, e)
+    # Attach a diagnostics sentinel so downstream agents can detect provider failures
+    # without changing the list contract. Consumers that only iterate dicts with "source"
+    # field will still work; those that introspect can read source == "__meta__".
+    results.append({
+        "source": "__meta__",
+        "provider_counts": per_provider_counts,
+        "provider_errors": dict(_PROVIDER_ERRORS),
+        "query": query,
+    })
     return results
 
 if __name__ == "__main__":

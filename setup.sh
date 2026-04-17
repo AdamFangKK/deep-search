@@ -32,16 +32,15 @@ fi
 # 2. Python Dependencies (pandas, yt-dlp)
 echo "🐍 Phase 2: Installing Python Dependencies..."
 if command -v pip3 &> /dev/null; then
-    cat << 'REQ' > "$(dirname "$0")/requirements.txt"
-pandas>=2.2.0,<3.0.0
-numpy>=1.26.0,<3.0.0
-yt-dlp>=2025.8.22
-beautifulsoup4>=4.14.0
-soupsieve>=2.8
-pdfplumber>=0.11.0
-openpyxl>=3.1.0
-REQ
-    pip3 install --user -r "$(dirname "$0")/requirements.txt"
+    REQ_FILE="$(dirname "$0")/requirements.txt"
+    if [ ! -f "$REQ_FILE" ]; then
+        echo "⚠️  requirements.txt missing; skill is shipped with one — aborting to avoid overwrite."
+    else
+        # Try standard install; fall back to --break-system-packages for PEP 668 managed envs.
+        pip3 install --user -r "$REQ_FILE" 2>/tmp/ds-pip.err \
+            || pip3 install --user --break-system-packages -r "$REQ_FILE" \
+            || { echo "❌ pip install failed:"; cat /tmp/ds-pip.err; }
+    fi
 else
     echo "❌ pip3 not found. Cannot install Python dependencies."
 fi

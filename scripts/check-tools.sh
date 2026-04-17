@@ -25,7 +25,8 @@ python3 -c "import yt_dlp" 2>/dev/null && echo "✅ yt-dlp" || echo "⚠️ yt-d
 echo ""
 echo "🛠️  SkillHub Skills:"
 HOME_SKILLS_DIR="$HOME/.agents/skills"
-WORKSPACE_SKILLS_DIR="$(pwd)/skills"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_SKILLS_DIR="$(dirname "$SCRIPT_DIR")/skills"
 
 check_skill() {
     local skill_name="$1"
@@ -37,6 +38,7 @@ check_skill() {
     fi
 }
 
+check_skill "multi-search-engine" "❌ multi-search-engine - REQUIRED (17 engines). Install with: skillhub install multi-search-engine"
 check_skill "news-aggregator-skill" "⚠️  news-aggregator-skill - install: skillhub install news-aggregator-skill"
 check_skill "academic-deep-research" "⚠️  academic-deep-research - install: skillhub install academic-deep-research"
 check_skill "web-monitor" "⚠️  web-monitor - optional"

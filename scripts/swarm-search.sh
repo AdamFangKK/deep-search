@@ -70,9 +70,11 @@ for engine_def in "${ENGINES[@]}"; do
     *) sleep 1 ;;
   esac
   
-  # Execute search
-  HTTP_CODE=$(curl -s -o "$RESULTS_DIR/${ENGINE_NAME}.html" -w "%{http_code}" \
-    -A "Mozilla/5.0 (compatible; DeepSearch/1.0)" \
+  # Execute search (follow redirects; realistic UA; accept standard content)
+  HTTP_CODE=$(curl -sSL -o "$RESULTS_DIR/${ENGINE_NAME}.html" -w "%{http_code}" \
+    -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" \
+    -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+    -H "Accept-Language: en-US,en;q=0.8,zh-CN;q=0.6" \
     --max-time 30 \
     "$ENGINE_URL" 2>/dev/null)
   

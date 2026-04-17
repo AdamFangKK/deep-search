@@ -121,7 +121,7 @@ function analyzeQueryComplexity(query: string): ComplexityConfig {
     hasComparison: /对比|比较|vs|versus|区别|差异/i.test(query),
     
     // 是否包含时间范围 (时间跨度大 = 更复杂)
-    hasTimeRange: /年度|年度|历史|趋势|回顾|发展/i.test(query),
+    hasTimeRange: /年度|历史|趋势|回顾|发展|预测/i.test(query),
     
     // 是否包含行业/领域词汇 (专业领域 = 更复杂)
     hasIndustryTerms: /行业|产业|市场|投资|融资|IPO|估值/i.test(query),
@@ -701,9 +701,6 @@ ${selectedAgents.map((agent, index) =>
 | 总代理数 | ${complexityConfig.totalAgents} 个 |
 | 搜索超时 | ${complexityConfig.timeout.search/1000} 秒 |
 | 分析超时 | ${complexityConfig.timeout.analysis/1000} 秒 |
-```
-| Agent 5 | Yahoo, Ecosia, WolframAlpha | ${searchResults[4]?.success ? '✅' : '❌'} | ${searchResults[4]?.data?.length || 0} |
-| Agent 6 | HackerNews, V2EX | ${searchResults[5]?.success ? '✅' : '❌'} | ${(searchResults[5]?.data?.hackernews?.length || 0) + (searchResults[5]?.data?.v2ex?.length || 0)} |
 ```
 
 ---
