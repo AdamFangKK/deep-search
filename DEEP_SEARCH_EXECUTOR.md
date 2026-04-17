@@ -20,6 +20,18 @@ It must not change on its own:
 
 The executor should consume routing, capability, profile, and evidence policy files rather than redefining those rules inline.
 
+Recommended planner entrypoint:
+
+```bash
+python3 scripts/plan-query.py "<query>"
+```
+
+Recommended search entrypoint when using a generated plan:
+
+```bash
+bash scripts/swarm-search.sh --plan /path/to/plan.json
+```
+
 ## 测试验证的权限边界
 
 ### ✅ 已验证的能力

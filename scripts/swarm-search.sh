@@ -4,10 +4,50 @@
 # Parallel search across 17 engines with rate limiting and failover
 # ==============================================================================
 
-QUERY="$1"
+PLAN_FILE=""
+if [ "${1:-}" = "--plan" ]; then
+  PLAN_FILE="${2:-}"
+  shift 2
+fi
+
+QUERY="${1:-}"
 MODE="${2:-general}"  # general, cn, news, tech
 RESULTS_DIR="/tmp/omo-deep-search/swarm-$(date +%s)"
 mkdir -p "$RESULTS_DIR"
+
+if [ -n "$PLAN_FILE" ]; then
+  if [ ! -f "$PLAN_FILE" ]; then
+    echo "❌ plan file not found: $PLAN_FILE"
+    exit 1
+  fi
+  if command -v python3 >/dev/null 2>&1; then
+    PLAN_QUERY=$(python3 - "$PLAN_FILE" <<'PY'
+import json, sys
+with open(sys.argv[1]) as fh:
+    data = json.load(fh)
+print(data.get("query", ""))
+PY
+)
+    PLAN_MODE=$(python3 - "$PLAN_FILE" <<'PY'
+import json, sys
+with open(sys.argv[1]) as fh:
+    data = json.load(fh)
+print(data.get("search_mode", "general"))
+PY
+)
+    if [ -n "$PLAN_QUERY" ]; then
+      QUERY="$PLAN_QUERY"
+    fi
+    if [ -n "$PLAN_MODE" ]; then
+      MODE="$PLAN_MODE"
+    fi
+  fi
+fi
+
+if [ -z "$QUERY" ]; then
+  echo "❌ usage: $0 [--plan plan.json] <query> [mode]"
+  exit 1
+fi
 
 # URL encode query
 ENCODED_QUERY=$(echo "$QUERY" | sed 's/ /+/g; s/:/%3A/g; s/\//%2F/g')

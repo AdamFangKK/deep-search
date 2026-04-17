@@ -16,6 +16,7 @@ required_files=(
   "$ROOT_DIR/config/evidence-policy.json"
   "$ROOT_DIR/config/execution-profiles.json"
   "$ROOT_DIR/config/query-routing.json"
+  "$ROOT_DIR/scripts/plan-query.py"
 )
 
 for file in "${required_files[@]}"; do
@@ -55,6 +56,7 @@ grep -q "config/capability-registry.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "�
 grep -q "config/evidence-policy.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references evidence policy" || { echo "❌ DEEP_SEARCH.md missing evidence policy reference"; exit 1; }
 grep -q "config/query-routing.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references query routing config" || { echo "❌ DEEP_SEARCH.md missing query routing reference"; exit 1; }
 grep -q "contracts/evidence-schema.json" "$ROOT_DIR/DEEP_SEARCH_EXECUTOR.md" && echo "✅ DEEP_SEARCH_EXECUTOR.md references evidence schema" || { echo "❌ DEEP_SEARCH_EXECUTOR.md missing evidence schema reference"; exit 1; }
+grep -q "scripts/plan-query.py" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references planner entrypoint" || { echo "❌ DEEP_SEARCH.md missing planner entrypoint"; exit 1; }
 
 echo ""
 echo "=================================="

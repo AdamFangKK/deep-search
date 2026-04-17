@@ -24,13 +24,17 @@ This file owns the execution contract. It should not silently redefine the repor
 The execution contract should follow this order:
 
 1. Normalize the user query
-2. Resolve intent via `config/query-routing.json`
-3. Resolve active profile via `config/execution-profiles.json`
-4. Select providers and fallback order via `config/capability-registry.json`
+2. Build a machine-readable execution plan via:
+   - `python3 scripts/plan-query.py "<query>"`
+3. Resolve intent via `config/query-routing.json`
+4. Resolve active profile via `config/execution-profiles.json`
+5. Select providers and fallback order via `config/capability-registry.json`
 5. Normalize, dedupe, and weigh evidence via:
    - `contracts/evidence-schema.json`
    - `config/evidence-policy.json`
-6. Synthesize the final report while preserving:
+6. Execute search/runtime helpers against that plan, for example:
+   - `bash scripts/swarm-search.sh --plan /path/to/plan.json`
+7. Synthesize the final report while preserving:
    - `contracts/output-contract.md`
 
 This keeps the skill functional and extensible without pushing internal engineering workflow into the repo surface.

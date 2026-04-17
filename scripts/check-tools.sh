@@ -31,7 +31,7 @@ python3 -c "import yt_dlp" 2>/dev/null && echo "✅ yt-dlp" || echo "⚠️ yt-d
 echo ""
 echo "🛠️  SkillHub Skills:"
 HOME_SKILLS_DIR="$HOME/.agents/skills"
-WORKSPACE_SKILLS_DIR="$(pwd)/skills"
+WORKSPACE_SKILLS_DIR="$ROOT_DIR/skills"
 
 check_skill() {
     local skill_name="$1"
