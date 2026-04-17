@@ -1,0 +1,12 @@
+{
+  "name": "playwright-fetch",
+  "version": "1.0.0",
+  "description": "Concurrent multi-agent-safe Playwright scraper for JS-heavy and anti-scraping targets.",
+  "author": "zoran",
+  "env_vars": [],
+  "binaries": ["node"],
+  "node_dependencies": ["playwright@^1.59.1"],
+  "optional_node_dependencies": ["playwright-extra@^4.0.0", "puppeteer-extra-plugin-stealth@^2.11.0"],
+  "entry": "playwright-fetch.mjs",
+  "args": "--targets <path> --out <dir> [--concurrency N] [--throttle ms] [--timeout ms] [--stealth]"
+}
