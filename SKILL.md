@@ -6,6 +6,17 @@ version: 4.0.0
 
 # /deep-search Command (v4.0: Executable Architecture)
 
+## Source Of Truth Boundaries
+
+- `SKILL.md`: trigger surface and user-visible invocation rules
+- `DEEP_SEARCH.md`: stable execution contract
+- `DEEP_SEARCH_EXECUTOR.md`: adaptive executor strategy
+- `contracts/output-contract.md`: frozen user-facing report shape
+- `contracts/evidence-schema.json`: normalized evidence contract
+- `config/capability-registry.json`: provider inventory and fallback order
+
+The goal of this split is to keep user-facing behavior stable while allowing internal execution strategy to evolve.
+
 ## 🚀 执行入口
 
 **当用户请求 deep-search 时，执行以下步骤：**
@@ -15,7 +26,7 @@ version: 4.0.0
 3. **渐进式披露**: 执行 Layer 1 → Layer 2 → Layer 3 的数据流
 4. **生成报告**: 输出 8-section 专业报告
 
-**注意**: SKILL.md 是设计文档，DEEP_SEARCH.md 是执行代码。OpenCode 在调用 skill 时会自动处理此流程。
+**注意**: `SKILL.md` 负责触发和边界，`DEEP_SEARCH.md` 负责稳定执行契约，`DEEP_SEARCH_EXECUTOR.md` 负责实现策略。OpenCode 在调用 skill 时会自动处理此流程。
 
 ---
 

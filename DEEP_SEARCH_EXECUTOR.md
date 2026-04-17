@@ -1,5 +1,22 @@
 # Deep Search Executor v7.0 - 可执行方案
 
+## Ownership
+
+This file defines the executor strategy layer, not the public report contract.
+
+It may change:
+
+- agent counts
+- scaling thresholds
+- timeout strategy
+- execution heuristics
+
+It must not change on its own:
+
+- top-level trigger behavior in `SKILL.md`
+- the 8-section report contract in `contracts/output-contract.md`
+- evidence normalization expectations in `contracts/evidence-schema.json`
+
 ## 测试验证的权限边界
 
 ### ✅ 已验证的能力

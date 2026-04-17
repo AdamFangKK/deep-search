@@ -6,6 +6,18 @@ version: 6.0.0
 
 # Deep Search Executor v6.0 (Adaptive Agent Scaling)
 
+## Stable Contract References
+
+The following files are the stable non-breaking contract layer:
+
+- `contracts/output-contract.md`
+- `contracts/evidence-schema.json`
+- `config/capability-registry.json`
+- `config/execution-profiles.json`
+- `evals/baseline-queries.v1.json`
+
+This file owns the execution contract. It should not silently redefine the report shape or provider semantics without updating those contract files.
+
 **核心优化**: 根据查询复杂度智能调整代理数量
 **目标**: 简单查询30秒，复杂查询2分钟，资源利用最优
 

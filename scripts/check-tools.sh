@@ -1,6 +1,12 @@
 #!/bin/bash
 # check-tools.sh - Environment verification script for deep-search
 
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+CAPABILITY_FILE="$ROOT_DIR/config/capability-registry.json"
+
 echo "🔍 Deep-Search Environment Check"
 echo "=================================="
 
@@ -42,6 +48,50 @@ check_skill "academic-deep-research" "⚠️  academic-deep-research - install: 
 check_skill "web-monitor" "⚠️  web-monitor - optional"
 check_skill "pdf-text-extractor" "⚠️  pdf-text-extractor - optional"
 check_skill "github" "⚠️  github - optional"
+
+echo ""
+echo "🧭 Capability Summary:"
+if [ -f "$CAPABILITY_FILE" ]; then
+    python3 - "$CAPABILITY_FILE" "$HOME_SKILLS_DIR" "$WORKSPACE_SKILLS_DIR" <<'PY'
+import json
+import pathlib
+import sys
+
+capability_file = pathlib.Path(sys.argv[1])
+home_skills = pathlib.Path(sys.argv[2])
+workspace_skills = pathlib.Path(sys.argv[3])
+
+data = json.loads(capability_file.read_text())
+
+def installed(provider: str) -> bool:
+    return (home_skills / provider).exists() or (workspace_skills / provider).exists()
+
+for capability in data.get("capabilities", []):
+    name = capability["name"]
+    primary = capability["primary_provider"]
+    fallbacks = capability.get("fallback_providers", [])
+    required = capability.get("required", False)
+    if installed(primary):
+        status = "READY"
+        detail = primary
+    else:
+        available_fallback = next((provider for provider in fallbacks if installed(provider)), None)
+        if available_fallback:
+            status = "FALLBACK"
+            detail = available_fallback
+        else:
+            status = "MISSING"
+            detail = primary
+    marker = {
+        "READY": "✅",
+        "FALLBACK": "⚠️ ",
+        "MISSING": "❌" if required else "⚠️ "
+    }[status]
+    print(f"{marker} {name}: {status} via {detail}")
+PY
+else
+    echo "⚠️  capability-registry.json not found"
+fi
 
 echo ""
 echo "=================================="

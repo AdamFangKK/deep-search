@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "description": "Regression baseline queries for architecture stabilization",
+  "comparison_rules": [
+    "Preserve the 8-section output structure",
+    "Preserve confidence and methodology reporting",
+    "Preserve multi-source evidence behavior",
+    "Accept clearer wording and lower noise",
+    "Reject conclusion drift that changes the product's research intent"
+  ],
+  "queries": [
+    {
+      "id": "tech-comparison-react-vue",
+      "category": "tech",
+      "prompt": "Deep search: Compare React vs Vue for enterprise applications in 2024. Focus on community feedback, performance, and real-world pain points."
+    },
+    {
+      "id": "llm-safety-papers",
+      "category": "academic",
+      "prompt": "Research: Latest LLM safety and alignment research papers from 2023-2024. Need academic rigor with citations."
+    },
+    {
+      "id": "stripe-due-diligence",
+      "category": "business",
+      "prompt": "Due diligence analysis of Stripe as a payment processor. Look for hidden fees, regulatory issues, and customer complaints."
+    },
+    {
+      "id": "apple-m3-hardware",
+      "category": "hardware",
+      "prompt": "Deep analysis of Apple M3 MacBook Pro. Need teardown info, benchmarks, and repairability assessment."
+    },
+    {
+      "id": "openai-announcement-verification",
+      "category": "news",
+      "prompt": "Verify claims about a major OpenAI model announcement. Check multiple sources for contradictions and timeline consistency."
+    },
+    {
+      "id": "open-source-agent-landscape",
+      "category": "ecosystem",
+      "prompt": "Deep search the current open-source AI agent landscape. Focus on serious frameworks, community traction, and real deployment signals."
+    },
+    {
+      "id": "china-ai-startup-competition",
+      "category": "market",
+      "prompt": "Analyze competition among Chinese AI startups in 2026. Focus on product direction, funding signals, and market positioning."
+    }
+  ]
+}

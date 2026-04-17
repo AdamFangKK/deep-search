@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "profiles": {
+    "default": {
+      "preserve_output_contract": true,
+      "min_sources": 5,
+      "min_domains": 3,
+      "allow_fallbacks": true,
+      "report_contract": "contracts/output-contract.md"
+    },
+    "fast": {
+      "preserve_output_contract": true,
+      "min_sources": 5,
+      "min_domains": 3,
+      "allow_fallbacks": true,
+      "report_contract": "contracts/output-contract.md"
+    },
+    "deep": {
+      "preserve_output_contract": true,
+      "min_sources": 8,
+      "min_domains": 4,
+      "allow_fallbacks": true,
+      "report_contract": "contracts/output-contract.md"
+    }
+  }
+}

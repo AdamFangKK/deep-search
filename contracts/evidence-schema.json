@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Deep Search Evidence Record",
+  "type": "object",
+  "required": [
+    "source_type",
+    "title",
+    "url",
+    "retrieved_at",
+    "claim",
+    "evidence_snippet",
+    "confidence",
+    "bias_risk",
+    "provider"
+  ],
+  "properties": {
+    "source_type": {
+      "type": "string",
+      "enum": ["web", "news", "academic", "community", "code", "document", "financial", "legal", "hardware"]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "url": { "type": "string", "minLength": 1 },
+    "retrieved_at": { "type": "string", "description": "ISO-8601 timestamp" },
+    "claim": { "type": "string", "minLength": 1 },
+    "evidence_snippet": { "type": "string", "minLength": 1 },
+    "confidence": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+    "bias_risk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+    "provider": { "type": "string", "minLength": 1 },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  }
+}

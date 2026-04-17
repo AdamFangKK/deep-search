@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "description": "Capability inventory and fallback policy for deep-search providers",
+  "capabilities": [
+    {
+      "name": "broad_web_search",
+      "primary_provider": "multi-search-engine",
+      "fallback_providers": ["search-cluster"],
+      "required": true,
+      "used_for": ["general coverage", "cross-validation", "context expansion"]
+    },
+    {
+      "name": "community_discussion",
+      "primary_provider": "news-aggregator-skill",
+      "fallback_providers": ["multi-search-engine"],
+      "required": false,
+      "used_for": ["hackernews", "community sentiment", "discussion surfaces"]
+    },
+    {
+      "name": "academic_research",
+      "primary_provider": "academic-deep-research",
+      "fallback_providers": ["multi-search-engine"],
+      "required": false,
+      "used_for": ["papers", "citations", "research context"]
+    },
+    {
+      "name": "code_intelligence",
+      "primary_provider": "github",
+      "fallback_providers": ["multi-search-engine"],
+      "required": false,
+      "used_for": ["repositories", "issues", "developer artifacts"]
+    },
+    {
+      "name": "document_processing",
+      "primary_provider": "pdf-text-extractor",
+      "fallback_providers": [],
+      "required": false,
+      "used_for": ["pdf parsing", "structured document extraction"]
+    }
+  ]
+}
