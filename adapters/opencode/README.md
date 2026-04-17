@@ -2,6 +2,10 @@
 
 This adapter explains how `deep-search` maps onto OpenCode-style runtime concepts.
 
+Machine-readable adapter manifest:
+
+- `adapters/opencode/adapter.json`
+
 ## Role
 
 OpenCode is one supported host, not the core architecture itself.

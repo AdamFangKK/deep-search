@@ -6,6 +6,20 @@
       "name": "broad_web_search",
       "primary_provider": "multi-search-engine",
       "fallback_providers": ["search-cluster"],
+      "platform_providers": {
+        "opencode": "multi-search-engine",
+        "codex": "multi-search-engine",
+        "claude-code": "multi-search-engine",
+        "hermes": "multi-search-engine",
+        "openclaw": "multi-search-engine"
+      },
+      "platform_fallback_providers": {
+        "opencode": ["search-cluster"],
+        "codex": ["search-cluster"],
+        "claude-code": ["search-cluster"],
+        "hermes": ["search-cluster"],
+        "openclaw": ["search-cluster"]
+      },
       "required": true,
       "used_for": ["general coverage", "cross-validation", "context expansion"]
     },
@@ -13,6 +27,20 @@
       "name": "community_discussion",
       "primary_provider": "news-aggregator-skill",
       "fallback_providers": ["multi-search-engine"],
+      "platform_providers": {
+        "opencode": "news-aggregator-skill",
+        "codex": "news-aggregator-skill",
+        "claude-code": "news-aggregator-skill",
+        "hermes": "news-aggregator-skill",
+        "openclaw": "news-aggregator-skill"
+      },
+      "platform_fallback_providers": {
+        "opencode": ["multi-search-engine"],
+        "codex": ["multi-search-engine"],
+        "claude-code": ["multi-search-engine"],
+        "hermes": ["multi-search-engine"],
+        "openclaw": ["multi-search-engine"]
+      },
       "required": false,
       "used_for": ["hackernews", "community sentiment", "discussion surfaces"]
     },
@@ -20,6 +48,20 @@
       "name": "academic_research",
       "primary_provider": "academic-deep-research",
       "fallback_providers": ["multi-search-engine"],
+      "platform_providers": {
+        "opencode": "academic-deep-research",
+        "codex": "academic-deep-research",
+        "claude-code": "academic-deep-research",
+        "hermes": "academic-deep-research",
+        "openclaw": "academic-deep-research"
+      },
+      "platform_fallback_providers": {
+        "opencode": ["multi-search-engine"],
+        "codex": ["multi-search-engine"],
+        "claude-code": ["multi-search-engine"],
+        "hermes": ["multi-search-engine"],
+        "openclaw": ["multi-search-engine"]
+      },
       "required": false,
       "used_for": ["papers", "citations", "research context"]
     },
@@ -27,6 +69,20 @@
       "name": "code_intelligence",
       "primary_provider": "github",
       "fallback_providers": ["multi-search-engine"],
+      "platform_providers": {
+        "opencode": "github",
+        "codex": "github",
+        "claude-code": "github",
+        "hermes": "github",
+        "openclaw": "github"
+      },
+      "platform_fallback_providers": {
+        "opencode": ["multi-search-engine"],
+        "codex": ["multi-search-engine"],
+        "claude-code": ["multi-search-engine"],
+        "hermes": ["multi-search-engine"],
+        "openclaw": ["multi-search-engine"]
+      },
       "required": false,
       "used_for": ["repositories", "issues", "developer artifacts"]
     },
@@ -34,6 +90,20 @@
       "name": "document_processing",
       "primary_provider": "pdf-text-extractor",
       "fallback_providers": [],
+      "platform_providers": {
+        "opencode": "pdf-text-extractor",
+        "codex": "pdf-text-extractor",
+        "claude-code": "pdf-text-extractor",
+        "hermes": "pdf-text-extractor",
+        "openclaw": "pdf-text-extractor"
+      },
+      "platform_fallback_providers": {
+        "opencode": [],
+        "codex": [],
+        "claude-code": [],
+        "hermes": [],
+        "openclaw": []
+      },
       "required": false,
       "used_for": ["pdf parsing", "structured document extraction"]
     }

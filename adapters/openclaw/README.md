@@ -2,6 +2,10 @@
 
 This adapter explains how `deep-search` maps onto OpenClaw-style runtime behavior.
 
+Machine-readable adapter manifest:
+
+- `adapters/openclaw/adapter.json`
+
 ## Role
 
 OpenClaw is a supported host surface for the `deep-search` core.

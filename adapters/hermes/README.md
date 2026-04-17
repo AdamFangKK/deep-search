@@ -2,6 +2,10 @@
 
 This adapter explains how `deep-search` maps onto Hermes-style runtime behavior.
 
+Machine-readable adapter manifest:
+
+- `adapters/hermes/adapter.json`
+
 ## Role
 
 Hermes is one supported skill-capable host.

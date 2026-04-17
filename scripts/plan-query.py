@@ -62,6 +62,7 @@ def provider_installed(provider: str, home_skills: Path, workspace_skills: Path)
 def resolve_capabilities(
     required_names: list[str],
     capability_registry: dict,
+    platform: str,
     home_skills: Path,
     workspace_skills: Path,
     allow_fallbacks: bool,
@@ -81,11 +82,14 @@ def resolve_capabilities(
                 }
             )
             continue
-        provider = capability["primary_provider"]
+        platform_providers = capability.get("platform_providers", {})
+        platform_fallbacks = capability.get("platform_fallback_providers", {})
+        provider = platform_providers.get(platform, capability["primary_provider"])
+        fallbacks = platform_fallbacks.get(platform, capability.get("fallback_providers", []))
         fallback_used = False
         status = "READY" if provider_installed(provider, home_skills, workspace_skills) else "MISSING"
         if status == "MISSING" and allow_fallbacks:
-            for fallback in capability.get("fallback_providers", []):
+            for fallback in fallbacks:
                 if provider_installed(fallback, home_skills, workspace_skills):
                     provider = fallback
                     status = "FALLBACK"
@@ -95,7 +99,8 @@ def resolve_capabilities(
             {
                 "name": name,
                 "status": status,
-                "provider": provider if status in {"READY", "FALLBACK"} else capability["primary_provider"],
+                "provider": provider if status in {"READY", "FALLBACK"} else platform_providers.get(platform, capability["primary_provider"]),
+                "platform": platform,
                 "fallback_used": fallback_used,
                 "required": capability.get("required", False),
                 "used_for": capability.get("used_for", []),
@@ -113,7 +118,7 @@ def choose_search_mode(intent: str, capabilities: list[dict]) -> str:
     return "general"
 
 
-def build_plan(query: str, repo_root: Path) -> dict:
+def build_plan(query: str, repo_root: Path, platform: str) -> dict:
     config_dir = repo_root / "config"
     routing = load_json(config_dir / "query-routing.json")
     profiles = load_json(config_dir / "execution-profiles.json")
@@ -130,6 +135,7 @@ def build_plan(query: str, repo_root: Path) -> dict:
     resolved_capabilities = resolve_capabilities(
         required_capabilities,
         capability_registry,
+        platform,
         home_skills,
         workspace_skills,
         bool(profile.get("allow_fallbacks", True)),
@@ -140,6 +146,7 @@ def build_plan(query: str, repo_root: Path) -> dict:
 
     return {
         "query": query,
+        "platform": platform,
         "intent": route["intent"],
         "matched_keywords": matched_keywords,
         "primary_agent": route["primary_agent"],
@@ -161,6 +168,12 @@ def build_plan(query: str, repo_root: Path) -> dict:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build a config-driven execution plan for deep-search")
     parser.add_argument("query", help="User query to route and plan")
+    parser.add_argument(
+        "--platform",
+        default="codex",
+        choices=["opencode", "codex", "claude-code", "hermes", "openclaw"],
+        help="Target host platform for provider resolution",
+    )
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output")
     return parser.parse_args()
 
@@ -168,7 +181,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     repo_root = Path(__file__).resolve().parent.parent
-    plan = build_plan(args.query, repo_root)
+    plan = build_plan(args.query, repo_root, args.platform)
     if args.pretty:
         print(json.dumps(plan, indent=2, ensure_ascii=False))
     else:

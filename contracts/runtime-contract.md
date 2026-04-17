@@ -58,6 +58,12 @@ Capabilities are platform-neutral names:
 
 Platform adapters must map these to platform-local tools, skills, scripts, or MCP surfaces.
 
+Machine-readable provider mapping lives in:
+
+- `config/capability-registry.json` via `platform_providers`
+- `config/capability-registry.json` via `platform_fallback_providers`
+- `adapters/<platform>/adapter.json`
+
 ## Adapter Responsibilities
 
 Each adapter must define:

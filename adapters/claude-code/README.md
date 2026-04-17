@@ -2,6 +2,10 @@
 
 This adapter explains how `deep-search` maps onto Claude Code style runtime behavior.
 
+Machine-readable adapter manifest:
+
+- `adapters/claude-code/adapter.json`
+
 ## Role
 
 Claude Code is a supported host surface, not the core runtime definition.

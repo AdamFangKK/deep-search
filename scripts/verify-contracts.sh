@@ -19,10 +19,15 @@ required_files=(
   "$ROOT_DIR/config/query-routing.json"
   "$ROOT_DIR/scripts/plan-query.py"
   "$ROOT_DIR/adapters/opencode/README.md"
+  "$ROOT_DIR/adapters/opencode/adapter.json"
   "$ROOT_DIR/adapters/codex/README.md"
+  "$ROOT_DIR/adapters/codex/adapter.json"
   "$ROOT_DIR/adapters/claude-code/README.md"
+  "$ROOT_DIR/adapters/claude-code/adapter.json"
   "$ROOT_DIR/adapters/hermes/README.md"
+  "$ROOT_DIR/adapters/hermes/adapter.json"
   "$ROOT_DIR/adapters/openclaw/README.md"
+  "$ROOT_DIR/adapters/openclaw/adapter.json"
 )
 
 for file in "${required_files[@]}"; do
@@ -47,6 +52,11 @@ json_files = [
     root / "config/evidence-policy.json",
     root / "config/execution-profiles.json",
     root / "config/query-routing.json",
+    root / "adapters/opencode/adapter.json",
+    root / "adapters/codex/adapter.json",
+    root / "adapters/claude-code/adapter.json",
+    root / "adapters/hermes/adapter.json",
+    root / "adapters/openclaw/adapter.json",
 ]
 
 for path in json_files:
@@ -60,6 +70,7 @@ echo "🔗 Reference Checks:"
 grep -q "contracts/runtime-contract.md" "$ROOT_DIR/SKILL.md" && echo "✅ SKILL.md references runtime contract" || { echo "❌ SKILL.md missing runtime contract reference"; exit 1; }
 grep -q "contracts/output-contract.md" "$ROOT_DIR/SKILL.md" && echo "✅ SKILL.md references output contract" || { echo "❌ SKILL.md missing output contract reference"; exit 1; }
 grep -q "adapters/opencode/README.md" "$ROOT_DIR/SKILL.md" && echo "✅ SKILL.md references adapter docs" || { echo "❌ SKILL.md missing adapter doc reference"; exit 1; }
+grep -q "platform_providers" "$ROOT_DIR/config/capability-registry.json" && echo "✅ capability registry includes platform provider mapping" || { echo "❌ capability registry missing platform provider mapping"; exit 1; }
 grep -q "config/capability-registry.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references capability registry" || { echo "❌ DEEP_SEARCH.md missing capability registry reference"; exit 1; }
 grep -q "config/evidence-policy.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references evidence policy" || { echo "❌ DEEP_SEARCH.md missing evidence policy reference"; exit 1; }
 grep -q "config/query-routing.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references query routing config" || { echo "❌ DEEP_SEARCH.md missing query routing reference"; exit 1; }

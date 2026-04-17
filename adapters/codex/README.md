@@ -2,6 +2,10 @@
 
 This adapter explains how `deep-search` maps onto Codex-style runtime behavior.
 
+Machine-readable adapter manifest:
+
+- `adapters/codex/adapter.json`
+
 ## Role
 
 Codex consumes the same core planning and contract files as any other host.

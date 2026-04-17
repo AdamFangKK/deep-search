@@ -1,0 +1,7 @@
+{
+  "platform": "openclaw",
+  "planner_entrypoint": "python3 scripts/plan-query.py \"<query>\" --platform openclaw --pretty",
+  "search_entrypoint": "bash scripts/swarm-search.sh --plan <plan.json>",
+  "worker_surface": "OpenClaw skills + local tools",
+  "provider_map_source": "config/capability-registry.json#capabilities[].platform_providers.openclaw"
+}
