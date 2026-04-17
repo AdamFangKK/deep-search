@@ -77,6 +77,7 @@ grep -q "config/query-routing.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP
 grep -q "adapters/" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md defers host syntax to adapters" || { echo "❌ DEEP_SEARCH.md missing adapter deferral"; exit 1; }
 grep -q "contracts/evidence-schema.json" "$ROOT_DIR/DEEP_SEARCH_EXECUTOR.md" && echo "✅ DEEP_SEARCH_EXECUTOR.md references evidence schema" || { echo "❌ DEEP_SEARCH_EXECUTOR.md missing evidence schema reference"; exit 1; }
 grep -q "scripts/plan-query.py" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references planner entrypoint" || { echo "❌ DEEP_SEARCH.md missing planner entrypoint"; exit 1; }
+grep -q -- "--platform" "$ROOT_DIR/scripts/swarm-search.sh" && echo "✅ swarm-search supports platform-aware execution" || { echo "❌ swarm-search missing platform-aware execution"; exit 1; }
 
 echo ""
 echo "=================================="

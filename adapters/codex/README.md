@@ -35,6 +35,12 @@ Current lowest-level search entrypoint:
 bash scripts/swarm-search.sh --plan /path/to/plan.json
 ```
 
+Direct platform-aware execution:
+
+```bash
+bash scripts/swarm-search.sh --platform codex "<query>" general
+```
+
 ### Capability mapping
 
 - `broad_web_search` -> local search scripts or host web tooling

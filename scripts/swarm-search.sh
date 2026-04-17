@@ -5,8 +5,14 @@
 # ==============================================================================
 
 PLAN_FILE=""
+PLATFORM="codex"
 if [ "${1:-}" = "--plan" ]; then
   PLAN_FILE="${2:-}"
+  shift 2
+fi
+
+if [ "${1:-}" = "--platform" ]; then
+  PLATFORM="${2:-codex}"
   shift 2
 fi
 
@@ -35,17 +41,34 @@ with open(sys.argv[1]) as fh:
 print(data.get("search_mode", "general"))
 PY
 )
+    PLAN_PLATFORM=$(python3 - "$PLAN_FILE" <<'PY'
+import json, sys
+with open(sys.argv[1]) as fh:
+    data = json.load(fh)
+print(data.get("platform", "codex"))
+PY
+)
     if [ -n "$PLAN_QUERY" ]; then
       QUERY="$PLAN_QUERY"
     fi
     if [ -n "$PLAN_MODE" ]; then
       MODE="$PLAN_MODE"
     fi
+    if [ -n "$PLAN_PLATFORM" ]; then
+      PLATFORM="$PLAN_PLATFORM"
+    fi
   fi
 fi
 
 if [ -z "$QUERY" ]; then
-  echo "❌ usage: $0 [--plan plan.json] <query> [mode]"
+  echo "❌ usage: $0 [--plan plan.json] [--platform platform] <query> [mode]"
+  exit 1
+fi
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ADAPTER_FILE="$ROOT_DIR/adapters/$PLATFORM/adapter.json"
+if [ ! -f "$ADAPTER_FILE" ]; then
+  echo "❌ adapter file not found for platform '$PLATFORM': $ADAPTER_FILE"
   exit 1
 fi
 
@@ -167,6 +190,7 @@ case "$MODE" in
 esac
 
 echo "🔍 Search Swarm: '$QUERY'"
+echo "🧩 Platform: $PLATFORM"
 echo "📊 Mode: $MODE"
 echo "🌐 Engines: ${#ENGINES[@]}"
 echo "📁 Results: $RESULTS_DIR"
@@ -218,6 +242,7 @@ echo "  📂 Output: $RESULTS_DIR/"
 cat > "$RESULTS_DIR/summary.json" << EOF
 {
   "query": "$QUERY",
+  "platform": "$PLATFORM",
   "mode": "$MODE",
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "engines_total": ${#ENGINES[@]},

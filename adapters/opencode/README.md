@@ -42,6 +42,12 @@ Typical mapping:
 
 If OpenCode requires `task(category=...)` or similar platform syntax, keep that instruction here rather than in the core runtime contract.
 
+Direct platform-aware execution:
+
+```bash
+bash scripts/swarm-search.sh --platform opencode "<query>" general
+```
+
 ## Adapter Rule
 
 Do not move OpenCode-specific invocation syntax back into:
