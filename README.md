@@ -110,4 +110,10 @@ Some providers are intentionally optional. If host-level skills like `github` or
 
 If you need auditability rather than best effort, use the strict lane. A strict run emits execution artifacts, deviation logs, and a final artifact-driven report instead of only returning prose.
 
+## License
+
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
+
+Bundled third-party skills or embedded upstream materials may retain their own licenses. Treat the root `LICENSE` as the license for this project unless a nested component explicitly states otherwise.
+
 If it saves you time, gives you better coverage, or helps you build a stronger research workflow, give it a star.
