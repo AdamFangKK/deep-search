@@ -26,6 +26,9 @@ Those belong in:
 - `DEEP_SEARCH_EXECUTOR.md`
 - `adapters/<platform>/README.md`
 
+Strict execution entrypoint:
+- `scripts/strict-run.py`
+
 ## Source Of Truth
 
 The stable contract layer is:
@@ -60,6 +63,9 @@ Every deep-search run should follow this sequence:
 6. Execute host/runtime search helpers using the generated plan.
 7. Synthesize the final report while preserving:
    - `contracts/output-contract.md`
+
+For strict runs, the runtime must also emit the execution artifacts defined by:
+- `contracts/execution-artifact-schema.json`
 
 ## Planner Contract
 
@@ -188,6 +194,8 @@ Before claiming contract integrity:
 - tests for planner behavior must pass
 
 `scripts/verify-contracts.sh` is the minimum verification surface.
+
+Strict runs must additionally leave machine-readable artifacts under the chosen output directory.
 
 ## Change Policy
 

@@ -45,6 +45,7 @@ Deep Search is built for the opposite:
 - `SKILL.md`: skill entrypoint and routing rules
 - `DEEP_SEARCH.md`: stable execution contract
 - `DEEP_SEARCH_EXECUTOR.md`: current execution strategy
+- `scripts/strict-run.py`: auditable strict runner for planner/runtime/artifact execution
 - `scripts/`: setup and environment verification
 - `skills/`: bundled supporting skills
 - `references/`: supporting notes and protocol references
@@ -106,5 +107,7 @@ If you are building serious research agents, this repo gives you a working base 
 This project is actively iterated. The architecture, prompts, and supporting skills will continue to evolve with real-world use.
 
 Some providers are intentionally optional. If host-level skills like `github` or `pdf-text-extractor` are absent, deep-search should degrade through planner-selected fallbacks instead of pretending those capabilities are always available.
+
+If you need auditability rather than best effort, use the strict lane. A strict run emits execution artifacts, deviation logs, and a final artifact-driven report instead of only returning prose.
 
 If it saves you time, gives you better coverage, or helps you build a stronger research workflow, give it a star.

@@ -78,6 +78,13 @@ class PlanQueryTests(unittest.TestCase):
         self.assertTrue(providers["github"]["optional_external"])
         self.assertTrue(providers["pdf-text-extractor"]["optional_external"])
 
+    def test_strict_plan_emits_artifact_requirements(self) -> None:
+        plan = plan_query.build_plan("strict audit query", REPO_ROOT, "codex", strict=True)
+        self.assertTrue(plan["strict"])
+        self.assertEqual(plan["artifact_contract"], "contracts/execution-artifact-schema.json")
+        self.assertIn("run-summary.json", plan["required_artifacts"])
+        self.assertIn("final-report.json", plan["required_artifacts"])
+
 
 if __name__ == "__main__":
     unittest.main()

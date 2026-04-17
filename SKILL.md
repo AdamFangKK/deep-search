@@ -27,6 +27,19 @@ The goal of this split is to keep user-facing behavior stable while allowing int
 3. **先走 planner**: 通过 `scripts/plan-query.py` 生成机器可读 plan，再选择能力与搜索模式
 4. **生成报告**: 输出 8-section 专业报告
 
+**如果用户显式要求严格执行 / 审计执行路径**，必须进入 strict lane：
+
+1. 运行 `python3 scripts/strict-run.py "<query>" --platform <platform>`
+2. 落严格执行 artifacts：
+   - `plan.json`
+   - `run-summary.json`
+   - `sources.json`
+   - `deviations.json`
+   - `report-template.md`
+   - `final-report.json`
+   - `final-report.md`
+3. 公开报告实际偏差，不允许把 fallback 隐藏成“正常执行”
+
 **注意**: `SKILL.md` 负责触发和边界，`DEEP_SEARCH.md` 负责稳定执行契约，`DEEP_SEARCH_EXECUTOR.md` 负责实现策略。真实路由、能力选择、搜索模式以 `config/` 和 `scripts/plan-query.py` 为准。平台专属调用方式请放在 `adapters/`，不要回灌进核心契约。
 
 ---
@@ -85,6 +98,9 @@ bash ~/.agents/skills/deep-search/scripts/check-tools.sh
 
 # Run deep search
 /deep-search "your research topic"
+
+# Run strict deep search
+python3 ~/.agents/skills/deep-search/scripts/strict-run.py "your research topic" --platform codex
 ```
 
 ## Platform Portability

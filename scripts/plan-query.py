@@ -127,7 +127,7 @@ def choose_search_mode(query: str, route: dict, capabilities: list[dict]) -> str
     return "general"
 
 
-def build_plan(query: str, repo_root: Path, platform: str) -> dict:
+def build_plan(query: str, repo_root: Path, platform: str, strict: bool = False) -> dict:
     config_dir = repo_root / "config"
     routing = load_json(config_dir / "query-routing.json")
     profiles = load_json(config_dir / "execution-profiles.json")
@@ -156,6 +156,7 @@ def build_plan(query: str, repo_root: Path, platform: str) -> dict:
     return {
         "query": query,
         "platform": platform,
+        "strict": strict,
         "intent": route["intent"],
         "matched_keywords": matched_keywords,
         "primary_agent": route["primary_agent"],
@@ -171,6 +172,16 @@ def build_plan(query: str, repo_root: Path, platform: str) -> dict:
             "require_confidence_annotation": evidence_policy["synthesis_rules"]["require_confidence_annotation"],
         },
         "report_contract": profile["report_contract"],
+        "artifact_contract": "contracts/execution-artifact-schema.json" if strict else None,
+        "required_artifacts": [
+            "plan.json",
+            "run-summary.json",
+            "sources.json",
+            "deviations.json",
+            "report-template.md",
+            "final-report.json",
+            "final-report.md",
+        ] if strict else [],
     }
 
 
@@ -183,6 +194,7 @@ def parse_args() -> argparse.Namespace:
         choices=["opencode", "codex", "claude-code", "hermes", "openclaw"],
         help="Target host platform for provider resolution",
     )
+    parser.add_argument("--strict", action="store_true", help="Emit a strict-mode plan with required execution artifacts")
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output")
     return parser.parse_args()
 
@@ -190,7 +202,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     repo_root = Path(__file__).resolve().parent.parent
-    plan = build_plan(args.query, repo_root, args.platform)
+    plan = build_plan(args.query, repo_root, args.platform, strict=args.strict)
     if args.pretty:
         print(json.dumps(plan, indent=2, ensure_ascii=False))
     else:

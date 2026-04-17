@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "description": "Required artifacts for strict deep-search runs",
+  "required_artifacts": {
+    "plan.json": {
+      "required": true,
+      "contains": ["query", "intent", "search_mode", "capabilities", "strict"]
+    },
+    "run-summary.json": {
+      "required": true,
+      "contains": ["query", "platform", "strict", "stages", "artifacts", "report_contract"]
+    },
+    "sources.json": {
+      "required": true,
+      "contains": ["broad_web_search", "community_discussion"]
+    },
+    "deviations.json": {
+      "required": true,
+      "contains": ["deviations"]
+    },
+    "report-template.md": {
+      "required": true,
+      "contains_sections": [
+        "执行摘要 / Executive Summary",
+        "研究方法 / Methodology",
+        "全景分析 / Universal Analysis",
+        "实证数据 / Empirical Evidence",
+        "垂直分析 / Domain Analysis",
+        "综合评估 / Synthesis",
+        "行动建议 / Recommendations",
+        "附录 / Appendices"
+      ]
+    },
+    "final-report.json": {
+      "required": true,
+      "contains": ["title", "generated_at", "data_points", "source_domains", "overall_confidence", "sections"]
+    },
+    "final-report.md": {
+      "required": true,
+      "contains_sections": [
+        "执行摘要 / Executive Summary",
+        "研究方法 / Methodology",
+        "全景分析 / Universal Analysis",
+        "实证数据 / Empirical Evidence",
+        "垂直分析 / Domain Analysis",
+        "综合评估 / Synthesis",
+        "行动建议 / Recommendations",
+        "附录 / Appendices"
+      ]
+    }
+  }
+}

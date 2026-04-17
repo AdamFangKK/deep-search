@@ -12,12 +12,14 @@ echo "=================================="
 required_files=(
   "$ROOT_DIR/contracts/runtime-contract.md"
   "$ROOT_DIR/contracts/output-contract.md"
+  "$ROOT_DIR/contracts/execution-artifact-schema.json"
   "$ROOT_DIR/contracts/evidence-schema.json"
   "$ROOT_DIR/config/capability-registry.json"
   "$ROOT_DIR/config/evidence-policy.json"
   "$ROOT_DIR/config/execution-profiles.json"
   "$ROOT_DIR/config/query-routing.json"
   "$ROOT_DIR/scripts/plan-query.py"
+  "$ROOT_DIR/scripts/strict-run.py"
   "$ROOT_DIR/adapters/opencode/README.md"
   "$ROOT_DIR/adapters/opencode/adapter.json"
   "$ROOT_DIR/adapters/codex/README.md"
@@ -49,6 +51,7 @@ from pathlib import Path
 root = Path(r"$ROOT_DIR")
 json_files = [
     root / "contracts/evidence-schema.json",
+    root / "contracts/execution-artifact-schema.json",
     root / "config/capability-registry.json",
     root / "config/evidence-policy.json",
     root / "config/execution-profiles.json",
@@ -121,6 +124,20 @@ if cn_plan["search_mode"] != "cn":
     print(f"❌ CJK query routed to wrong search mode: {cn_plan['search_mode']}")
     sys.exit(1)
 print("✅ CJK query routes to cn mode")
+
+strict_plan = json.loads(
+    subprocess.check_output(
+        [sys.executable, str(root / "scripts/plan-query.py"), "strict audit query", "--strict"],
+        text=True,
+    )
+)
+if not strict_plan.get("strict"):
+    print("❌ strict planner output did not set strict=true")
+    sys.exit(1)
+if not strict_plan.get("required_artifacts"):
+    print("❌ strict planner output missing required_artifacts")
+    sys.exit(1)
+print("✅ strict planner output includes artifact requirements")
 PY
 
 echo ""
@@ -135,6 +152,7 @@ grep -q "config/query-routing.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP
 grep -q "adapters/" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md defers host syntax to adapters" || { echo "❌ DEEP_SEARCH.md missing adapter deferral"; exit 1; }
 grep -q "contracts/evidence-schema.json" "$ROOT_DIR/DEEP_SEARCH_EXECUTOR.md" && echo "✅ DEEP_SEARCH_EXECUTOR.md references evidence schema" || { echo "❌ DEEP_SEARCH_EXECUTOR.md missing evidence schema reference"; exit 1; }
 grep -q "scripts/plan-query.py" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references planner entrypoint" || { echo "❌ DEEP_SEARCH.md missing planner entrypoint"; exit 1; }
+grep -q "scripts/strict-run.py" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references strict runner" || { echo "❌ DEEP_SEARCH.md missing strict runner reference"; exit 1; }
 grep -q -- "--platform" "$ROOT_DIR/scripts/swarm-search.sh" && echo "✅ swarm-search supports platform-aware execution" || { echo "❌ swarm-search missing platform-aware execution"; exit 1; }
 if rg -q "Deep Search Executor v6.0|5-Agent Swarm|Adaptive Agent Scaling|websearch_exa|news-aggregator-skill" "$ROOT_DIR/DEEP_SEARCH.md" "$ROOT_DIR/references/vertical-enhancers"; then
     echo "❌ found stale host-specific or versioned wording in contract/reference docs"
