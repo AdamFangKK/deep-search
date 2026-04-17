@@ -1,62 +1,105 @@
 # Deep Search
 
-Deep Search is a local-first research skill for exhaustive, multi-angle investigation. It combines a command surface, execution playbooks, setup scripts, and bundled specialist sub-skills so you can run high-coverage research workflows from your own agent environment instead of a hosted black box.
+**Deep Search is a local-first deep research skill for people who are tired of shallow summaries.**
 
-## What It Does
+It turns one prompt into a serious investigation workflow: broad search, news aggregation, academic lookup, code and repo signals, cross-validation, and structured synthesis.
 
-- Expands a single research prompt into a saturation-style search workflow
-- Combines broad web search, news aggregation, academic lookup, and code/repo reconnaissance
-- Separates execution guidance from architectural notes so the workflow stays maintainable
-- Ships with helper scripts for environment setup and dependency checks
-- Bundles companion skills such as `academic-deep-research`, `news-aggregator-skill`, and `search-cluster`
+If normal search gives you "a quick answer," Deep Search is built to give you **a defensible answer**.
 
-## Repository Layout
+## Why People Use It
 
-- `SKILL.md`: top-level skill entrypoint and routing rules
-- `DEEP_SEARCH.md`: main execution protocol
-- `DEEP_SEARCH_EXECUTOR.md`: adaptive executor design
-- `references/`: supporting references for tool and workflow choices
-- `scripts/`: local setup and environment verification helpers
-- `skills/`: bundled supporting skills used by the workflow
-- `evals/`: evaluation notes and schema artifacts
+Most AI search flows fail in the same ways:
+
+- they stop after a few easy sources
+- they miss community signals and second-order context
+- they collapse conflicting evidence into a fake consensus
+- they give polished summaries without showing enough research depth
+
+Deep Search is built for the opposite:
+
+- wider coverage
+- more source diversity
+- better adversarial cross-checking
+- a reusable workflow you can run locally and keep improving
+
+## What Makes It Different
+
+- **Local-first**: your workflow lives in your own environment, not inside a closed SaaS box
+- **Multi-source by design**: web, news, academic material, repo/code signals, and supporting specialist skills
+- **Research-oriented**: designed for investigation, not just answer generation
+- **Reusable**: packaged as a skill with setup scripts, execution docs, and bundled sub-skills
+- **Composable**: easy to adapt for competitive research, technical research, trend tracking, and content discovery
+
+## Good Fit For
+
+- AI tool and product research
+- startup, market, and competitor analysis
+- technical ecosystem mapping
+- topic validation before writing or investing time
+- tracking fast-moving narratives with less blind trust
+- building agentic research workflows on top of a solid base
+
+## What You Get
+
+- `SKILL.md`: skill entrypoint and routing rules
+- `DEEP_SEARCH.md`: core execution workflow
+- `DEEP_SEARCH_EXECUTOR.md`: adaptive execution notes
+- `scripts/`: setup and environment verification
+- `skills/`: bundled supporting skills
+- `references/`: supporting notes and protocol references
+- `evals/`: evaluation artifacts
+
+## Example Outcome
+
+Instead of:
+
+> "Here are the top 3 links and a summary."
+
+Deep Search is meant to produce something closer to:
+
+- what the mainstream sources say
+- what community discussion contradicts
+- what technical or academic sources confirm
+- where the evidence is still weak
+- what you should watch next
+
+That is the difference between a summary tool and a research tool.
 
 ## Install
 
 ```bash
-git clone https://github.com/<your-github-username>/deep-search.git
+git clone https://github.com/fanghongyang/deep-search.git
 cd deep-search
 bash setup.sh
 bash scripts/check-tools.sh
 ```
 
-## Use
-
-Use this repository as a local skill package inside an agent environment that supports `SKILL.md` workflows.
-
-Typical trigger patterns:
+## Typical Triggers
 
 - `/deep-search <topic>`
 - `[search-mode] MAXIMIZE SEARCH EFFORT`
-- tasks that need exhaustive, cross-validated research instead of a quick answer
+- any task where a shallow answer is risky or insufficient
 
-## Why This Exists
+## Who Should Star This
 
-Most search helpers stop at "one query, one summary." This skill is designed for the cases where that fails:
+Star this repo if you care about any of these:
 
-- conflicting sources
-- thin evidence
-- fast-moving narratives
-- community sentiment hidden outside mainstream coverage
-- research tasks that need both breadth and adversarial cross-checking
+- better research workflows for AI agents
+- reducing blind spots in online investigation
+- local-first alternatives to black-box deep research products
+- reusable skill architecture instead of one-off prompts
+- practical building blocks for competitive intelligence and topic analysis
 
-## Included Assets
+## Why I Open-Sourced It
 
-- local setup bootstrap
-- dependency audit script
-- adaptive executor notes
-- bundled sub-skills for news, academic research, and search clustering
-- marketplace metadata for local plugin packaging
+I wanted a research workflow I could inspect, modify, and improve over time.
+
+Most "deep research" products feel powerful, but they hide the process. This repo goes in the opposite direction: expose the workflow, keep it editable, and make it reusable.
+
+If you are building serious research agents, this repo gives you a working base instead of a vague idea.
 
 ## Current State
 
-This repo reflects an actively iterated local skill. Expect the architecture and prompts to evolve as the workflow is tested against real research tasks.
+This project is actively iterated. The architecture, prompts, and supporting skills will continue to evolve with real-world use.
+
+If it saves you time, gives you better coverage, or helps you build a stronger research workflow, give it a star.
