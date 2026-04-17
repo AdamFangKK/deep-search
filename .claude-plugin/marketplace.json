@@ -1,0 +1,20 @@
+{
+  "name": "deep-search-local",
+  "owner": {
+    "name": "Local"
+  },
+  "metadata": {
+    "description": "Deep search skill for exhaustive multi-faceted research"
+  },
+  "plugins": [
+    {
+      "name": "deep-search",
+      "source": {
+        "source": "path",
+        "path": "."
+      },
+      "description": "Deep multi-faceted research with 5-agent swarm architecture",
+      "version": "4.0.0"
+    }
+  ]
+}

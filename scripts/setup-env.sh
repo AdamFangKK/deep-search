@@ -12,7 +12,7 @@ fi
 
 # Install Python dependencies
 echo "🐍 Installing Python dependencies..."
-pip3 install beautifulsoup4 soupsieve pdfplumber PyPDF2 python-docx python-pptx openpyxl
+pip3 install beautifulsoup4>=4.14.0 soupsieve>=2.8.0 pdfplumber>=0.11.0 python-docx>=1.2.0 python-pptx>=1.0.0 openpyxl>=3.1.0
 
 # Install SkillHub skills
 echo "🛠️  Installing SkillHub skills..."

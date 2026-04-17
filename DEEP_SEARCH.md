@@ -1,33 +1,36 @@
 ---
-name: deep-search-executor-full-parallel
-description: Deep Search 可执行入口 - 子代理全并行版（最大化效率）
-version: 5.0.0
+name: deep-search-executor-adaptive
+description: Deep Search 可执行入口 - 智能动态调整版（自适应代理数量）
+version: 6.0.0
 ---
 
-# Deep Search Executor v5.0 (Sub-agent Full Parallel)
+# Deep Search Executor v6.0 (Adaptive Agent Scaling)
 
-**核心优化**: 子代理并行搜索 + 子代理并行分析
-**目标**: 1-2 分钟完成，最大化数据覆盖
-
----
-
-## 架构变更 (v5.0)
-
-**关键改进**: 子代理现在可以执行网络搜索任务！
-
-| 版本 | 搜索执行 | 分析执行 | 并行度 |
-|------|----------|----------|--------|
-| v4.3 | 主代理串行 | 子代理并行 | 低 |
-| **v5.0** | **子代理并行** | **子代理并行** | **高** |
-
-**优势**:
-- 搜索和分析都由子代理并行执行
-- 主代理只负责协调和合成
-- 整体执行时间缩短 30-50%
+**核心优化**: 根据查询复杂度智能调整代理数量
+**目标**: 简单查询30秒，复杂查询2分钟，资源利用最优
 
 ---
 
-## 17 个搜索引擎分组策略
+## 架构变更 (v6.0)
+
+**关键改进**: 代理数量不再是固定的，而是根据查询复杂度动态调整！
+
+| 版本 | 搜索代理 | 分析代理 | 总代理数 | 适用场景 |
+|------|----------|----------|----------|----------|
+| v5.0 | 6 (固定) | 4 (固定) | 10 | 所有查询 |
+| **v6.0** | **3-12** | **2-8** | **5-20** | **自适应** |
+
+**智能分级**:
+| 复杂度 | 搜索代理 | 分析代理 | 总代理 | 预估用时 | 适用场景 |
+|--------|----------|----------|--------|----------|----------|
+| **Simple** | 4 | 3 | 7 | 30-45秒 | 简单事实查询 |
+| **Medium** | 6 | 4 | 10 | 45-60秒 | 标准新闻查询 |
+| **Complex** | 9 | 6 | 15 | 60-90秒 | 深度研究报告 |
+| **Extreme** | 12 | 8 | 20 | 90-120秒 | 全面行业分析 |
+
+---
+
+## 查询复杂度分析模块
 
 ### 分组逻辑（由6个子代理并行执行）
 
@@ -98,9 +101,235 @@ PHASE 3: 快速合成 - 目标: 10-15 秒
 
 ---
 
+## 查询复杂度分析模块
+
+### 复杂度评估算法
+
+```typescript
+/**
+ * 查询复杂度评估器
+ * 输入: 用户查询
+ * 输出: 复杂度等级 + 推荐代理数量
+ */
+function analyzeQueryComplexity(query: string): ComplexityConfig {
+  // 1. 计算各项指标
+  const metrics = {
+    // 关键词数量 (多关键词 = 更复杂)
+    keywordCount: query.split(/\s+/).length,
+    
+    // 是否包含比较类词汇 (对比分析更复杂)
+    hasComparison: /对比|比较|vs|versus|区别|差异/i.test(query),
+    
+    // 是否包含时间范围 (时间跨度大 = 更复杂)
+    hasTimeRange: /年度|年度|历史|趋势|回顾|发展/i.test(query),
+    
+    // 是否包含行业/领域词汇 (专业领域 = 更复杂)
+    hasIndustryTerms: /行业|产业|市场|投资|融资|IPO|估值/i.test(query),
+    
+    // 是否要求深度分析 (深度 = 更复杂)
+    requiresDepth: /深度|详细|全面|完整|彻底|透彻/i.test(query),
+    
+    // 查询长度 (越长越具体或越复杂)
+    queryLength: query.length
+  };
+  
+  // 2. 计算复杂度分数
+  const score = 
+    metrics.keywordCount * 2 +
+    (metrics.hasComparison ? 15 : 0) +
+    (metrics.hasTimeRange ? 10 : 0) +
+    (metrics.hasIndustryTerms ? 12 : 0) +
+    (metrics.requiresDepth ? 20 : 0) +
+    Math.min(metrics.queryLength / 5, 10);
+  
+  // 3. 映射到复杂度等级
+  if (score < 20) {
+    return {
+      level: 'simple',
+      searchAgents: 4,
+      analysisAgents: 3,
+      totalAgents: 7,
+      timeout: { search: 30000, analysis: 30000 },
+      description: '简单事实查询'
+    };
+  } else if (score < 40) {
+    return {
+      level: 'medium',
+      searchAgents: 6,
+      analysisAgents: 4,
+      totalAgents: 10,
+      timeout: { search: 40000, analysis: 45000 },
+      description: '标准新闻查询'
+    };
+  } else if (score < 60) {
+    return {
+      level: 'complex',
+      searchAgents: 9,
+      analysisAgents: 6,
+      totalAgents: 15,
+      timeout: { search: 50000, analysis: 60000 },
+      description: '深度研究报告'
+    };
+  } else {
+    return {
+      level: 'extreme',
+      searchAgents: 12,
+      analysisAgents: 8,
+      totalAgents: 20,
+      timeout: { search: 60000, analysis: 90000 },
+      description: '全面行业分析'
+    };
+  }
+}
+
+// 复杂度配置接口
+interface ComplexityConfig {
+  level: 'simple' | 'medium' | 'complex' | 'extreme';
+  searchAgents: number;
+  analysisAgents: number;
+  totalAgents: number;
+  timeout: { search: number; analysis: number };
+  description: string;
+}
+```
+
+### 复杂度等级对照表
+
+| 复杂度 | 分数范围 | 搜索代理 | 分析代理 | 搜索引擎 | 数据源数 | 适用场景 |
+|--------|----------|----------|----------|----------|----------|----------|
+| **Simple** | 0-20 | 4 | 3 | 8-10 | 5-8 | 事实查询、简单问题 |
+| **Medium** | 20-40 | 6 | 4 | 14-16 | 8-12 | 新闻查询、标准研究 |
+| **Complex** | 40-60 | 9 | 6 | 18-20 | 12-16 | 深度分析、行业研究 |
+| **Extreme** | 60+ | 12 | 8 | 21+ | 16-20 | 全面回顾、竞争分析 |
+
+### 示例评估
+
+```
+查询: "今日硅谷圈新闻"
+- keywordCount: 4
+- hasComparison: false
+- hasTimeRange: false (无年度/趋势)
+- hasIndustryTerms: false
+- requiresDepth: false
+- queryLength: 8
+
+分数 = 4*2 + 0 + 0 + 0 + 0 + 1.6 = 9.6
+等级: Simple (4搜索 + 3分析 = 7代理)
+
+---
+
+查询: "AI行业2026年度回顾与2027预测"
+- keywordCount: 8
+- hasComparison: false
+- hasTimeRange: true (年度、回顾、预测)
+- hasIndustryTerms: true (行业)
+- requiresDepth: false
+- queryLength: 16
+
+分数 = 8*2 + 0 + 10 + 12 + 0 + 3.2 = 39.2
+等级: Medium (6搜索 + 4分析 = 10代理)
+
+---
+
+查询: "深度对比分析OpenAI vs Anthropic vs Google在大模型领域的技术路线、商业模式与估值差异"
+- keywordCount: 15
+- hasComparison: true (对比、vs、差异)
+- hasTimeRange: false
+- hasIndustryTerms: true (估值、商业模式)
+- requiresDepth: true (深度)
+- queryLength: 38
+
+分数 = 15*2 + 15 + 0 + 12 + 20 + 7.6 = 84.6
+等级: Extreme (12搜索 + 8分析 = 20代理)
+```
+
+---
+
 ## 指令执行块
 
-### STEP 1: 6个搜索代理并行搜索
+### STEP 0: 复杂度分析
+
+**在启动任何代理之前，先分析查询复杂度**：
+
+```typescript
+// STEP 0: 分析查询复杂度，决定代理数量
+const complexityConfig = analyzeQueryComplexity("{{topic}}");
+
+console.log(`📊 查询复杂度: ${complexityConfig.level}`);
+console.log(`📊 推荐配置: ${complexityConfig.searchAgents}搜索 + ${complexityConfig.analysisAgents}分析 = ${complexityConfig.totalAgents}代理`);
+console.log(`📊 预估用时: ${complexityConfig.timeout.search/1000}秒搜索 + ${complexityConfig.timeout.analysis/1000}秒分析`);
+```
+
+### STEP 1: 动态启动搜索代理
+
+**根据复杂度配置，动态启动搜索代理**：
+
+```typescript
+// 定义所有可能的搜索代理配置
+const allSearchAgentConfigs = [
+  { name: "Google系", engines: ["google", "google_hk", "bing_int"], skill: "multi-search-engine", priority: 1 },
+  { name: "隐私引擎", engines: ["duckduckgo", "startpage", "brave", "qwant"], skill: "multi-search-engine", priority: 2 },
+  { name: "国内主流", engines: ["baidu", "bing_cn", "sogou", "360"], skill: "multi-search-engine", priority: 2 },
+  { name: "国内垂直", engines: ["wechat", "toutiao", "jisilu"], skill: "multi-search-engine", priority: 3 },
+  { name: "其他国际", engines: ["yahoo", "ecosia", "wolframalpha"], skill: "multi-search-engine", priority: 3 },
+  { name: "社区讨论", engines: ["hackernews", "v2ex"], skill: "news-aggregator-skill", priority: 2 },
+  { name: "GitHub", engines: ["github"], skill: "github", priority: 4 },
+  { name: "StackOverflow", engines: ["stackoverflow"], skill: "multi-search-engine", priority: 4 },
+  { name: "Reddit", engines: ["reddit"], skill: "websearch-exa", priority: 4 },
+  { name: "Twitter/X", engines: ["twitter"], skill: "websearch-exa", priority: 4 },
+  { name: "学术论文", engines: ["arxiv", "scholar"], skill: "academic-deep-research", priority: 5 },
+  { name: "新闻聚合", engines: ["newsapi"], skill: "news-aggregator-skill", priority: 5 }
+];
+
+// 根据复杂度选择代理
+function selectSearchAgents(config: ComplexityConfig): SearchAgentConfig[] {
+  // Simple: 只选优先级1-2的代理 (4个)
+  // Medium: 选优先级1-3的代理 (6个)
+  // Complex: 选优先级1-4的代理 (9个)
+  // Extreme: 选全部代理 (12个)
+  
+  const maxPriority = {
+    'simple': 2,
+    'medium': 3,
+    'complex': 4,
+    'extreme': 5
+  }[config.level];
+  
+  return allSearchAgentConfigs
+    .filter(agent => agent.priority <= maxPriority)
+    .slice(0, config.searchAgents);
+}
+
+// 动态创建搜索代理
+const selectedAgents = selectSearchAgents(complexityConfig);
+
+const searchAgents = selectedAgents.map(agentConfig => 
+  task({
+    category: "quick",
+    load_skills: [agentConfig.skill],
+    run_in_background: true,
+    description: `Search Agent - ${agentConfig.name}`,
+    prompt: `
+## 任务: 搜索 ${agentConfig.name}
+
+搜索关键词: "{{topic}}"
+负责引擎: ${agentConfig.engines.join(", ")}
+
+使用 ${agentConfig.skill} 搜索以上引擎，每个引擎返回5条结果。
+
+## 输出格式
+返回 JSON 格式的搜索结果数组。
+
+## 要求
+- 每个引擎返回5条结果
+- 包含标题、URL、摘要
+- 按相关性排序
+`
+  })
+);
+
+console.log(`🚀 启动 ${searchAgents.length} 个搜索代理...`);
+```
 
 **使用 task() 创建6个子代理并行执行搜索**：
 
@@ -309,146 +538,97 @@ const searchData = {
 };
 ```
 
-### STEP 3: 4个分析代理并行分析
+### STEP 3: 动态启动分析代理
 
-**4个分析子代理并行处理不同维度的数据**：
+**根据复杂度配置，动态启动分析代理**：
 
 ```typescript
-// Analyst 1: Global Observer - 分析官方和主流来源
-const analyst1 = task({
-  category: "quick",
-  load_skills: [], // 不加载网络依赖的skill
-  run_in_background: true,
-  description: "Global Observer - 主流媒体分析",
-  prompt: `
-## 任务: 分析 ${successfulAgents} 个搜索代理的数据
+// 定义所有可能的分析代理配置
+const allAnalystConfigs = [
+  { name: "Global Observer", category: "quick", priority: 1, 
+    description: "分析官方立场和主流媒体报道", 
+    promptTemplate: "分析官方立场(2-3点)、主流媒体报道(3-4点)、信息可靠性、覆盖缺口" },
+  { name: "Underground OSINT", category: "quick", priority: 1, 
+    description: "分析社区讨论和用户反馈", 
+    promptTemplate: "分析用户反馈(2-3点)、常见问题(2-3点)、社区情感、未被官方提及的问题" },
+  { name: "Oracle", category: "ultrabrain", priority: 2, 
+    description: "偏见检测和利益相关方分析", 
+    promptTemplate: "识别利益相关方(2-3个)、潜在偏见(2-3点)、隐藏动机" },
+  { name: "Vertical Enhancer", category: "deep", priority: 2, 
+    description: "领域深度分析", 
+    promptTemplate: "基于主题类型进行深入分析：研究趋势、技术架构、商业模式、事件脉络" },
+  { name: "Fact Checker", category: "quick", priority: 3, 
+    description: "事实核查和交叉验证", 
+    promptTemplate: "验证关键事实、交叉比对多个来源、识别矛盾信息" },
+  { name: "Trend Analyzer", category: "quick", priority: 3, 
+    description: "趋势分析和预测", 
+    promptTemplate: "分析发展趋势、预测未来走向、识别转折点" },
+  { name: "Competitor Analyst", category: "deep", priority: 4, 
+    description: "竞争格局分析", 
+    promptTemplate: "分析竞争格局、市场份额、竞争优势、战略动向" },
+  { name: "Risk Assessor", category: "ultrabrain", priority: 4, 
+    description: "风险评估", 
+    promptTemplate: "识别潜在风险、评估影响程度、提出应对建议" }
+];
+
+// 根据复杂度选择分析代理
+function selectAnalysisAgents(config: ComplexityConfig): AnalystConfig[] {
+  // Simple: 只选优先级1的代理 (2个)
+  // Medium: 选优先级1-2的代理 (4个)
+  // Complex: 选优先级1-3的代理 (6个)
+  // Extreme: 选全部代理 (8个)
+  
+  const maxPriority = {
+    'simple': 1,
+    'medium': 2,
+    'complex': 3,
+    'extreme': 4
+  }[config.level];
+  
+  return allAnalystConfigs
+    .filter(analyst => analyst.priority <= maxPriority)
+    .slice(0, config.analysisAgents);
+}
+
+// 动态创建分析代理
+const selectedAnalysts = selectAnalysisAgents(complexityConfig);
+
+const analysisAgents = selectedAnalysts.map(analystConfig => 
+  task({
+    category: analystConfig.category,
+    load_skills: [],
+    run_in_background: true,
+    description: `${analystConfig.name} - ${analystConfig.description}`,
+    prompt: `
+## 任务: ${analystConfig.description}
 
 ## 输入数据
 主题: {{topic}}
 总结果数: ${allSearchResults.length}
+搜索代理数: ${successfulAgents} 个
 
 按来源分类的数据:
-- Google系: ${JSON.stringify(allSearchResults.filter(r => r.engine?.includes('google')).slice(0, 3))}
-- 隐私引擎: ${JSON.stringify(allSearchResults.filter(r => ['duckduckgo', 'startpage', 'brave', 'qwant'].includes(r.engine)).slice(0, 3))}
-- 国内引擎: ${JSON.stringify(allSearchResults.filter(r => ['baidu', 'bing_cn', 'sogou', '360'].includes(r.engine)).slice(0, 3))}
-
-## 分析要求（简洁输出）
-1. 官方立场（2-3点）
-2. 主流媒体报道（3-4点）
-3. 信息可靠性: HIGH/MEDIUM/LOW
-4. 覆盖缺口
-
-## 输出格式
-{
-  "officialStance": ["..."],
-  "mediaCoverage": ["..."],
-  "reliability": "HIGH",
-  "gaps": ["..."]
-}
-
-只分析提供的数据，禁止额外搜索！
-`
-});
-
-// Analyst 2: Underground OSINT - 分析社区
-const analyst2 = task({
-  category: "quick",
-  load_skills: [],
-  run_in_background: true,
-  description: "Underground OSINT - 社区分析",
-  prompt: `
-## 任务: 分析社区讨论
-
-## 输入数据
-HN讨论: ${JSON.stringify(allCommunityResults.hackernews)}
-V2EX讨论: ${JSON.stringify(allCommunityResults.v2ex)}
-
-## 分析要求（简洁输出）
-1. 用户反馈（2-3点）
-2. 常见问题（2-3点）
-3. 社区情感: positive/negative/mixed
-4. 未被官方提及的问题
-
-## 输出格式
-{
-  "userFeedback": ["..."],
-  "commonIssues": ["..."],
-  "sentiment": "mixed",
-  "hiddenIssues": ["..."]
-}
-
-只分析提供的数据，禁止额外搜索！
-`
-});
-
-// Analyst 3: Oracle - 偏见与激励分析
-const analyst3 = task({
-  category: "ultrabrain",
-  load_skills: [],
-  run_in_background: true,
-  description: "Oracle - 偏见检测分析",
-  prompt: `
-## 任务: 基于多源数据的偏见分析
-
-## 输入数据
-多引擎搜索结果: ${JSON.stringify(allSearchResults.slice(0, 10))}
-社区反馈: ${JSON.stringify(allCommunityResults)}
-
-## 分析要求（简洁输出）
-1. 利益相关方（2-3个）
-2. 潜在偏见（2-3点）
-3. 隐藏动机
-
-## 输出格式
-{
-  "stakeholders": [{"name": "...", "interest": "..."}],
-  "biases": ["..."],
-  "motivations": ["..."]
-}
-
-基于提供的数据分析，禁止额外搜索！
-`
-});
-
-// Analyst 4: Vertical Enhancer - 领域特定分析
-const analyst4 = task({
-  category: "deep",
-  load_skills: [],
-  run_in_background: true,
-  description: "Vertical Enhancer - 领域深度分析",
-  prompt: `
-## 任务: 领域深度分析
-
-## 输入数据
-19个数据源综合数据: ${JSON.stringify(allSearchResults.slice(0, 12))}
-主题类型: {{intent}}
+- 国际引擎: ${JSON.stringify(allSearchResults.filter(r => r.engine?.includes('google') || r.engine?.includes('bing')).slice(0, 3))}
+- 国内引擎: ${JSON.stringify(allSearchResults.filter(r => ['baidu', 'sogou', '360'].includes(r.engine)).slice(0, 3))}
+- 社区讨论: ${JSON.stringify(allCommunityResults)}
 
 ## 分析要求
-基于主题类型进行深入分析：
-- academic: 研究趋势、方法论
-- technical: 技术架构、实现细节
-- business: 商业模式、竞争格局
-- news: 事件脉络、多方观点
-- general: 综合评估
+${analystConfig.promptTemplate}
 
-## 输出格式（简洁）
-{
-  "domainInsights": ["..."],
-  "technicalDetails": "...",
-  "keyFindings": ["..."]
-}
+## 输出格式
+返回 JSON 格式的分析结果。
 
 只分析提供的数据，禁止额外搜索！
 `
-});
+  })
+);
 
-// 并行启动所有4个分析代理
-const analysisAgents = [analyst1, analyst2, analyst3, analyst4];
+console.log(`🧠 启动 ${analysisAgents.length} 个分析代理...`);
 
 // 收集所有分析结果
 const analysisResults = await Promise.all(
   analysisAgents.map(agent => 
-    background_output({task_id: agent.task_id, timeout: 45000})
+    background_output({task_id: agent.task_id, timeout: complexityConfig.timeout.analysis})
   )
 );
 ```
@@ -460,20 +640,20 @@ const analysisResults = await Promise.all(
 const searchData = {
   topic: "{{topic}}",
   timestamp: new Date().toISOString(),
-  totalAgents: 6,
-  successfulAgents: successfulAgents,
+  complexity: complexityConfig.level,
+  totalSearchAgents: complexityConfig.searchAgents,
+  successfulSearchAgents: successfulAgents,
   totalResults: allSearchResults.length,
   topResults: allSearchResults.slice(0, 30),
   communityResults: allCommunityResults
 };
 
 // 聚合分析结果
-const analysisData = {
-  globalObserver: analysisResults[0]?.data || {},
-  undergroundOSINT: analysisResults[1]?.data || {},
-  oracle: analysisResults[2]?.data || {},
-  verticalEnhancer: analysisResults[3]?.data || {}
-};
+const analysisData = {};
+selectedAnalysts.forEach((analyst, index) => {
+  analysisData[analyst.name.toLowerCase().replace(/\s+/g, '_')] = 
+    analysisResults[index]?.data || {};
+});
 ```
 
 ### STEP 5: 快速生成报告
@@ -482,29 +662,24 @@ const analysisData = {
 # ⚡ Deep-Search: {{topic}} 全景分析报告
 
 **生成时间**: ${new Date().toLocaleString()}  
-**数据源**: ${successfulAgents}/6 个搜索代理 + 2 个社区  
+**查询复杂度**: ${complexityConfig.level} (${complexityConfig.description})
+**数据源**: ${successfulAgents}/${complexityConfig.searchAgents} 个搜索代理  
+**分析维度**: ${analysisAgents.length} 个分析代理  
 **总数据点**: ${searchData.totalResults} 条结果  
-**分析代理**: 4 个并行  
 **总用时**: ~${(Date.now() - startTime)/1000} 秒
+
+---
 
 ## 1. 执行摘要
 ${extractKeyPoints(analysisResults)}
 
 ## 2. 多源数据分析
 
-### 2.1 官方与主流视角
-搜索代理覆盖: ${successfulAgents} 个代理成功执行
-${analysisData.globalObserver}
-
-### 2.2 社区真实声音
-来源: HackerNews (${searchData.communityResults.hackernews?.length || 0}条), V2EX (${searchData.communityResults.v2ex?.length || 0}条)
-${analysisData.undergroundOSINT}
-
-### 2.3 偏见与激励分析
-${analysisData.oracle}
-
-### 2.4 领域深度洞察
-${analysisData.verticalEnhancer}
+${selectedAnalysts.map((analyst, index) => `
+### 2.${index + 1} ${analyst.name}
+${analyst.description}
+${analysisData[analyst.name.toLowerCase().replace(/\s+/g, '_')]}
+`).join('\n')}
 
 ## 3. 关键判断与建议
 - **置信度**: ${calculateConfidence(analysisResults)}
@@ -514,10 +689,19 @@ ${analysisData.verticalEnhancer}
 ## 4. 数据源详情
 | 搜索代理 | 引擎 | 状态 | 结果数 |
 |----------|------|------|--------|
-| Agent 1 | Google, Google HK, Bing INT | ${searchResults[0]?.success ? '✅' : '❌'} | ${searchResults[0]?.data?.length || 0} |
-| Agent 2 | DDG, Startpage, Brave, Qwant | ${searchResults[1]?.success ? '✅' : '❌'} | ${searchResults[1]?.data?.length || 0} |
-| Agent 3 | Baidu, Bing CN, Sogou, 360 | ${searchResults[2]?.success ? '✅' : '❌'} | ${searchResults[2]?.data?.length || 0} |
-| Agent 4 | WeChat, Toutiao, Jisilu | ${searchResults[3]?.success ? '✅' : '❌'} | ${searchResults[3]?.data?.length || 0} |
+${selectedAgents.map((agent, index) => 
+  `| ${agent.name} | ${agent.engines.join(', ')} | ${searchResults[index]?.success ? '✅' : '❌'} | ${searchResults[index]?.data?.length || 0} |`
+).join('\n')}
+
+## 5. 资源使用统计
+| 指标 | 数值 |
+|------|------|
+| 搜索代理 | ${complexityConfig.searchAgents} 个 |
+| 分析代理 | ${complexityConfig.analysisAgents} 个 |
+| 总代理数 | ${complexityConfig.totalAgents} 个 |
+| 搜索超时 | ${complexityConfig.timeout.search/1000} 秒 |
+| 分析超时 | ${complexityConfig.timeout.analysis/1000} 秒 |
+```
 | Agent 5 | Yahoo, Ecosia, WolframAlpha | ${searchResults[4]?.success ? '✅' : '❌'} | ${searchResults[4]?.data?.length || 0} |
 | Agent 6 | HackerNews, V2EX | ${searchResults[5]?.success ? '✅' : '❌'} | ${(searchResults[5]?.data?.hackernews?.length || 0) + (searchResults[5]?.data?.v2ex?.length || 0)} |
 ```
@@ -585,20 +769,24 @@ ${analysisData.verticalEnhancer}
 
 当此文件被加载时，按顺序执行以下步骤：
 
-1. **STEP 1**: 创建6个搜索代理并行执行搜索
-2. **STEP 2**: 等待所有搜索代理完成，聚合结果
-3. **STEP 3**: 创建4个分析代理并行执行分析
-4. **STEP 4**: 等待所有分析代理完成，聚合结果
-5. **STEP 5**: 生成最终报告
+1. **STEP 0**: 分析查询复杂度，决定代理数量配置
+2. **STEP 1**: 根据配置动态创建搜索代理并行执行搜索
+3. **STEP 2**: 等待所有搜索代理完成，聚合结果
+4. **STEP 3**: 根据配置动态创建分析代理并行执行分析
+5. **STEP 4**: 等待所有分析代理完成，聚合结果
+6. **STEP 5**: 生成最终报告（包含资源使用统计）
 
 **预期性能**:
-- 6个搜索代理并行: 20-30秒
-- 4个分析代理并行: 20-30秒
-- 报告生成: 10-15秒
-- **总计: 50-75秒（不到1分钟）**
 
-**关键改进**:
-- 子代理现在可以执行网络搜索
-- 10个子代理真正并行执行
-- 主代理只负责协调和合成
-- 整体执行时间缩短30-50%
+| 复杂度 | 搜索代理 | 分析代理 | 总代理 | 预估用时 | 适用场景 |
+|--------|----------|----------|--------|----------|----------|
+| **Simple** | 4 | 3 | 7 | 30-45秒 | 简单事实查询 |
+| **Medium** | 6 | 4 | 10 | 45-60秒 | 标准新闻查询 |
+| **Complex** | 9 | 6 | 15 | 60-90秒 | 深度研究报告 |
+| **Extreme** | 12 | 8 | 20 | 90-120秒 | 全面行业分析 |
+
+**关键改进 (v6.0)**:
+- 智能动态调整代理数量（不再是固定10个）
+- 简单查询只用7个代理，快速完成
+- 复杂查询最多20个代理，全面覆盖
+- 资源利用率最优，避免浪费

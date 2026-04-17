@@ -1,3 +1,17 @@
-pandas>=2.0.0
-numpy>=1.22.4
-yt-dlp>=2023.10.13
+# Deep-Search Skill Dependencies
+# Updated: 2026-04-13
+
+# Core data processing
+pandas>=2.2.0,<3.0.0
+numpy>=1.26.0,<3.0.0
+
+# Media downloading
+yt-dlp>=2025.8.22
+
+# HTML and document parsing
+beautifulsoup4>=4.14.0
+soupsieve>=2.8
+pdfplumber>=0.11.0
+openpyxl>=3.1.0
+
+# Note: keep requirements compatible with the default macOS Python 3.9+ toolchain

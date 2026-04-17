@@ -33,11 +33,15 @@ fi
 echo "🐍 Phase 2: Installing Python Dependencies..."
 if command -v pip3 &> /dev/null; then
     cat << 'REQ' > "$(dirname "$0")/requirements.txt"
-pandas>=2.0.0
-numpy>=1.22.4
-yt-dlp>=2023.10.13
+pandas>=2.2.0,<3.0.0
+numpy>=1.26.0,<3.0.0
+yt-dlp>=2025.8.22
+beautifulsoup4>=4.14.0
+soupsieve>=2.8
+pdfplumber>=0.11.0
+openpyxl>=3.1.0
 REQ
-    pip3 install -r "$(dirname "$0")/requirements.txt"
+    pip3 install --user -r "$(dirname "$0")/requirements.txt"
 else
     echo "❌ pip3 not found. Cannot install Python dependencies."
 fi
@@ -79,7 +83,7 @@ echo "   Install: skillhub install pdf-text-extractor"
 echo ""
 echo " - document-pro - PDF, DOCX, PPT, XLSX processing"
 echo "   Install: skillhub install document-pro"
-echo "   Setup: pip3 install pdfplumber PyPDF2 python-docx python-pptx openpyxl"
+echo "   Setup: pip3 install pdfplumber>=0.11.0 python-docx>=1.2.0 python-pptx>=1.0.0 openpyxl>=3.1.0"
 echo ""
 echo " - parser - JSON, CSV, XML, YAML parser"
 echo "   Install: skillhub install parser"

@@ -13,5 +13,5 @@
     { "name": "SEARCH_USER_AGENT", "description": "Custom User-Agent (Optional)", "required": false }
   ],
   "binaries": ["python3"],
-  "python_dependencies": ["redis", "scrapling"]
+  "python_dependencies": ["redis>=5.0.0", "scrapling>=0.4.0"]
 }
