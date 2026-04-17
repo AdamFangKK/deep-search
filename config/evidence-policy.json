@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "description": "Minimal evidence normalization and weighting policy for deep-search",
+  "dedupe": {
+    "primary_keys": ["url", "claim"],
+    "normalize_url": true,
+    "drop_exact_duplicates": true
+  },
+  "confidence_rules": {
+    "high_confidence_source_types": ["academic", "document", "legal", "financial"],
+    "supporting_source_types": ["web", "news", "code", "hardware"],
+    "context_only_source_types": ["community"],
+    "community_requires_supporting_source": true
+  },
+  "conflict_rules": {
+    "mark_conflict_when_same_claim_has_opposing_support": true,
+    "prefer_direct_sources_over_aggregated_commentary": true,
+    "record_unresolved_conflicts_in_appendix": true
+  },
+  "synthesis_rules": {
+    "separate_evidence_from_inference": true,
+    "preserve_limitations_section": true,
+    "require_confidence_annotation": true
+  }
+}

@@ -13,10 +13,36 @@ The following files are the stable non-breaking contract layer:
 - `contracts/output-contract.md`
 - `contracts/evidence-schema.json`
 - `config/capability-registry.json`
+- `config/evidence-policy.json`
 - `config/execution-profiles.json`
 - `config/query-routing.json`
 
 This file owns the execution contract. It should not silently redefine the report shape or provider semantics without updating those contract files.
+
+## Contract-Driven Execution Flow
+
+The execution contract should follow this order:
+
+1. Normalize the user query
+2. Resolve intent via `config/query-routing.json`
+3. Resolve active profile via `config/execution-profiles.json`
+4. Select providers and fallback order via `config/capability-registry.json`
+5. Normalize, dedupe, and weigh evidence via:
+   - `contracts/evidence-schema.json`
+   - `config/evidence-policy.json`
+6. Synthesize the final report while preserving:
+   - `contracts/output-contract.md`
+
+This keeps the skill functional and extensible without pushing internal engineering workflow into the repo surface.
+
+## Functional Routing Rules
+
+- `query-routing.json` owns intent selection and minimum evidence targets by scenario
+- `execution-profiles.json` owns profile-level thresholds such as `min_sources` and `min_domains`
+- `capability-registry.json` owns provider priority and fallback order
+- `evidence-policy.json` owns dedupe, conflict marking, and confidence-weighting rules
+
+When documentation examples differ from these files, the config files are the source of truth.
 
 **核心优化**: 根据查询复杂度智能调整代理数量
 **目标**: 简单查询30秒，复杂查询2分钟，资源利用最优

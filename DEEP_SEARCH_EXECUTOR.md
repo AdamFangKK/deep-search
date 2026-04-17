@@ -16,6 +16,9 @@ It must not change on its own:
 - top-level trigger behavior in `SKILL.md`
 - the 8-section report contract in `contracts/output-contract.md`
 - evidence normalization expectations in `contracts/evidence-schema.json`
+- evidence weighting and conflict rules in `config/evidence-policy.json`
+
+The executor should consume routing, capability, profile, and evidence policy files rather than redefining those rules inline.
 
 ## 测试验证的权限边界
 
