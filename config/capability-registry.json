@@ -69,6 +69,8 @@
       "name": "code_intelligence",
       "primary_provider": "github",
       "fallback_providers": ["multi-search-engine"],
+      "optional_external": true,
+      "availability_note": "Primary provider is not bundled with deep-search and may require host-level installation.",
       "platform_providers": {
         "opencode": "github",
         "codex": "github",
@@ -90,6 +92,8 @@
       "name": "document_processing",
       "primary_provider": "pdf-text-extractor",
       "fallback_providers": [],
+      "optional_external": true,
+      "availability_note": "Document extraction is an optional external dependency and may be unavailable on some hosts.",
       "platform_providers": {
         "opencode": "pdf-text-extractor",
         "codex": "pdf-text-extractor",

@@ -1,6 +1,6 @@
 # The Scholar
 
-**Agent Type**: `academic-deep-research` + `librarian`  
+**Execution Surface**: `academic_research` + `broad_web_search`  
 **Category**: Vertical Enhancer (Academic topics)  
 **Trigger**: Keywords: paper, research, arxiv, study, academic, citation
 

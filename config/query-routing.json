@@ -12,7 +12,7 @@
   "routes": [
     {
       "intent": "academic",
-      "keywords": ["paper", "research", "arxiv", "citation", "literature"],
+      "keywords": ["paper", "research", "arxiv", "citation", "literature", "论文", "研究", "文献", "引用"],
       "primary_agent": "The Scholar",
       "primary_capabilities": ["academic_research", "broad_web_search"],
       "secondary_capabilities": ["community_discussion"],
@@ -21,7 +21,7 @@
     },
     {
       "intent": "legal",
-      "keywords": ["legal", "compliance", "gdpr", "regulation", "lawsuit"],
+      "keywords": ["legal", "compliance", "gdpr", "regulation", "lawsuit", "法律", "合规", "监管", "诉讼"],
       "primary_agent": "Legal Decoder",
       "primary_capabilities": ["broad_web_search", "document_processing"],
       "secondary_capabilities": [],
@@ -30,7 +30,7 @@
     },
     {
       "intent": "hardware",
-      "keywords": ["hardware", "chip", "device", "teardown", "benchmark"],
+      "keywords": ["hardware", "chip", "device", "teardown", "benchmark", "硬件", "芯片", "设备", "拆解", "跑分"],
       "primary_agent": "Hardware Inspector",
       "primary_capabilities": ["broad_web_search", "document_processing"],
       "secondary_capabilities": ["community_discussion"],
@@ -39,7 +39,7 @@
     },
     {
       "intent": "code_tech",
-      "keywords": ["repo", "library", "api", "framework", "sdk", "open source"],
+      "keywords": ["repo", "library", "api", "framework", "sdk", "open source", "仓库", "库", "框架", "开源"],
       "primary_agent": "Technical Recon",
       "primary_capabilities": ["code_intelligence", "broad_web_search"],
       "secondary_capabilities": ["community_discussion"],
@@ -48,7 +48,7 @@
     },
     {
       "intent": "news_drama",
-      "keywords": ["breaking news", "announcement", "controversy", "scandal", "rumor"],
+      "keywords": ["breaking news", "announcement", "controversy", "scandal", "rumor", "新闻", "公告", "争议", "丑闻", "传闻"],
       "primary_agent": "Fact Assassin",
       "primary_capabilities": ["community_discussion", "broad_web_search"],
       "secondary_capabilities": [],
@@ -57,7 +57,7 @@
     },
     {
       "intent": "business",
-      "keywords": ["startup", "funding", "sec", "pricing", "business model", "valuation"],
+      "keywords": ["startup", "funding", "sec", "pricing", "business model", "valuation", "创业", "融资", "定价", "商业模式", "估值"],
       "primary_agent": "Compliance Auditor",
       "primary_capabilities": ["broad_web_search", "document_processing"],
       "secondary_capabilities": ["community_discussion"],
@@ -66,7 +66,7 @@
     },
     {
       "intent": "community",
-      "keywords": ["reddit", "complaints", "community", "users say", "feedback"],
+      "keywords": ["reddit", "complaints", "community", "users say", "feedback", "社区", "吐槽", "反馈", "用户评价"],
       "primary_agent": "Underground OSINT",
       "primary_capabilities": ["community_discussion", "broad_web_search"],
       "secondary_capabilities": [],
@@ -75,7 +75,7 @@
     },
     {
       "intent": "analysis",
-      "keywords": ["bias", "incentives", "stakeholders", "narrative", "agenda"],
+      "keywords": ["bias", "incentives", "stakeholders", "narrative", "agenda", "偏见", "激励", "利益相关方", "叙事", "议程"],
       "primary_agent": "Oracle",
       "primary_capabilities": ["broad_web_search"],
       "secondary_capabilities": ["community_discussion"],

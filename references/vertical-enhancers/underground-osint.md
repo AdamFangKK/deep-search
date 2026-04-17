@@ -1,6 +1,6 @@
 # The Underground OSINT
 
-**Agent Type**: `librarian` + `news-aggregator-skill`  
+**Execution Surface**: `community_discussion` capability  
 **Category**: Universal Base Agent (Always Run)  
 **Trigger**: ALL searches
 
@@ -20,32 +20,21 @@ Find "raw truth" from community sources:
 ## Two-Layer Tool Stack
 
 ### Primary Layer (Community Deep Dive)
-**Tools**:
-- `websearch_exa` — Reddit via Exa AI (community discussions)
-- `news-aggregator-skill` — HN, V2EX (curated tech community)
+**Capability**:
+- `community_discussion` — Reddit/HN/V2EX and adjacent community surfaces via the planner-selected provider
 
-**Irreplaceable because**: Only these tools can access Reddit/HN's unique community content.
+**Why it matters**: This lane captures grassroots signal that broad web search will under-sample.
 
-```bash
-# Primary Layer: Community deep dive
-
-# Reddit via Exa AI
-websearch_exa "site:reddit.com/r/[subreddit] [topic] complaints problems"
-websearch_exa "site:reddit.com [topic] vs [alternative] experience"
-
-# HN via news-aggregator
-python3 ~/.agents/skills/news-aggregator-skill/scripts/fetch_news.py \
-  --source hackernews --limit 20 \
-  --keyword "[topic],issues,problems" --deep
-
-# Chinese dev community
-python3 ~/.agents/skills/news-aggregator-skill/scripts/fetch_news.py \
-  --source v2ex --limit 15 \
-  --keyword "[topic]" --deep
+```text
+Primary Layer examples:
+- Reddit complaint threads
+- Hacker News discussions
+- V2EX / forum reactions
+- other community surfaces exposed by the active provider
 ```
 
 ### Base Layer (Context Expansion)
-**Tool**: `multi-search-engine` (17 engines)
+**Capability**: `broad_web_search`
 - **Purpose**: Find community discussions beyond Reddit/HN (forums, blogs, Twitter)
 - **Activation**: When:
   - Reddit/HN coverage is insufficient
@@ -84,8 +73,8 @@ bash ~/.agents/skills/deep-search/scripts/swarm-search.sh \
 
 | Agent | Data Layer | Primary Sources | Question Answered |
 |-------|-----------|-----------------|-------------------|
-| **Global Observer** | Institutional | multi-search-engine (17 engines) | "What do they OFFICIALLY say?" |
-| **Underground OSINT** | Grassroots | Reddit, HN, V2EX + multi-search-engine backup | "What do USERS actually experience?" |
+| **Global Observer** | Institutional | `broad_web_search` | "What do they OFFICIALLY say?" |
+| **Underground OSINT** | Grassroots | `community_discussion` + `broad_web_search` backup | "What do USERS actually experience?" |
 
 **Workflow**:
 1. Global Observer researches official sources → Identifies gaps
@@ -136,8 +125,8 @@ If "no negative info found", MUST document:
 
 ## Backup Sources (Base Layer)
 
-If Reddit/HN insufficient:
-- **Twitter/X** advanced search → Base Layer multi-search-engine
+If curated community coverage is insufficient:
+- broaden with `broad_web_search`
 - **GitHub Issues** → Technical Recon overlap
 - **Stack Overflow** → Technical Recon overlap
 - **Lobste.rs, IndieHackers** → Base Layer forum search

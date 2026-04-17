@@ -1,4 +1,4 @@
-# Deep Search Executor v7.0 - 可执行方案
+# Deep Search Executor v7.0 - 当前执行策略
 
 ## Ownership
 
@@ -88,8 +88,12 @@ Phase 3: 合成 (主代理)
 
 ```typescript
 /**
- * Deep Search Executor v6.0
+ * Deep Search Executor v7.0
  * 基于实际测试的权限边界设计
+ *
+ * Note:
+ * - 下面是策略伪代码，不是某个宿主的直接可运行源码
+ * - 字段名应与当前 task 接口和 searchData 结构保持一致
  */
 
 // ============ Phase 1: 搜索集群 ============
@@ -124,11 +128,18 @@ async function phase1SearchCluster(topic: string) {
   
   // 聚合成功结果
   const searchData = {
-    allResults: searchResults.flatMap(r => r.success ? r.data : []),
+    international: searchResults
+      .slice(0, 2)
+      .flatMap(r => r.success ? r.data : [])
+      .concat(searchResults[4]?.success ? searchResults[4].data : []),
+    domestic: searchResults
+      .slice(2, 4)
+      .flatMap(r => r.success ? r.data : []),
     communityResults: {
       hackernews: searchResults[5]?.data?.hackernews || [],
       v2ex: searchResults[5]?.data?.v2ex || []
     },
+    allResults: searchResults.flatMap(r => r.success ? r.data : []),
     successfulAgents: searchResults.filter(r => r.success).length,
     timestamp: Date.now(),
     duration: Date.now() - startTime
@@ -136,6 +147,8 @@ async function phase1SearchCluster(topic: string) {
   
   console.log(`✅ Phase 1完成: ${searchData.duration}ms`);
   console.log(`   成功代理: ${searchData.successfulAgents}/6`);
+  console.log(`   国际结果: ${searchData.international.length} 条`);
+  console.log(`   国内结果: ${searchData.domestic.length} 条`);
   console.log(`   总结果数: ${searchData.allResults.length} 条`);
   
   return searchData;
@@ -241,8 +254,8 @@ function spawnAnalyst(type: string, data: any) {
   
   return task({
     category: type === "bias" ? "ultrabrain" : "deep",
-    loadSkills: [],
-    runInBackground: true,
+    load_skills: [],
+    run_in_background: true,
     description: `${type}分析`,
     prompt: `
 ## ${type}分析任务

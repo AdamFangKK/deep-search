@@ -1,6 +1,6 @@
 # The Fact Assassin
 
-**Agent Type**: `news-aggregator-skill` + `unspecified-high`  
+**Execution Surface**: `community_discussion` + `broad_web_search`  
 **Category**: Vertical Enhancer (News/Drama topics)  
 **Trigger**: Keywords: breaking news, scandal, controversy, drama
 
@@ -19,25 +19,19 @@ Find contradictions and verify claims:
 ## Two-Layer Tool Stack
 
 ### Primary Layer (News Deep Dive)
-**Tool**: `news-aggregator-skill`
+**Capability**: `community_discussion`
 - **Purpose**: Curated news from 8+ authoritative sources
 - **Strength**: Editorial quality, journalist verification, structured data
 - **Sources**: HN, 36kr, V2EX, WallStreetCN, Weibo, etc.
 
-```bash
-# Primary Layer: Curated news deep dive
-python3 ~/.agents/skills/news-aggregator-skill/scripts/fetch_news.py \
-  --source all --limit 15 \
-  --keyword "[topic],controversy,scandal" --deep
-
-# HN Tech discussions
-python3 ~/.agents/skills/news-aggregator-skill/scripts/fetch_news.py \
-  --source hackernews --limit 20 \
-  --keyword "[topic]" --deep
+```text
+Primary Layer examples:
+- curated news aggregation
+- HN / V2EX / editorial discussion sources
 ```
 
 ### Base Layer (Cross-Validation)
-**Tool**: `multi-search-engine` (17 engines)
+**Capability**: `broad_web_search`
 - **Purpose**: Cross-validate news claims across general web
 - **Activation**: When fact-checking specific claims:
   - "[claim] fact check"
@@ -135,8 +129,8 @@ Timeline analysis with timestamped contradictions:
 
 | Layer | Source Type | Trust Level | Speed |
 |-------|------------|-------------|-------|
-| **Primary** (news-aggregator) | Journalists, editors | Higher | Slower (curation) |
-| **Base** (multi-search-engine) | Blogs, forums, social | Varies | Faster (broad) |
+| **Primary** (`community_discussion`) | Journalists, editors, curated community sources | Higher | Slower (curation) |
+| **Base** (`broad_web_search`) | Blogs, forums, social | Varies | Faster (broad) |
 
 **Combined**:
 - Primary = "What authoritative sources say"

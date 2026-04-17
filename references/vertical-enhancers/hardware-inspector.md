@@ -1,6 +1,6 @@
 # The Hardware Inspector
 
-**Agent Type**: `librarian`  
+**Execution Surface**: `broad_web_search` + optional `document_processing`  
 **Category**: Vertical Enhancer (Hardware topics)  
 **Trigger**: Keywords: hardware, chip, device, teardown, benchmark, repair
 
@@ -20,21 +20,21 @@ Hardware analysis and validation:
 ## Two-Layer Tool Stack
 
 ### Primary Layer (Hardware Deep Dive)
-**Tools**:
-- `websearch_exa` — iFixit teardowns, FCC filings
-- Direct fetching — Benchmark databases, spec sheets
+**Capabilities**:
+- `broad_web_search` for teardowns, filings, benchmarks, spec sheets
+- optional `document_processing` for datasheets or filings when extraction is needed
 
 **Irreplaceable because**: Only iFixit provides professional teardowns; only FCC has regulatory filings.
 
-```bash
-# Primary Layer: Professional teardowns and specs
-websearch_exa "[device] teardown site:ifixit.com"
-websearch_exa "[device] FCC filing ID"
-websearch_exa "[chip] datasheet specifications"
+```text
+Primary Layer examples:
+- teardown coverage
+- FCC or regulatory filings
+- datasheet/specification lookup
 ```
 
 ### Base Layer (Review Aggregation)
-**Tool**: `multi-search-engine` (17 engines)
+**Capability**: `broad_web_search`
 - **Purpose**: Gather diverse reviews, long-term reliability reports, user complaints
 - **Activation**: For:
   - "[device] review AnandTech Tom's Hardware"
@@ -151,7 +151,7 @@ bash ~/.agents/skills/deep-search/scripts/swarm-search.sh \
 
 ## Why Two Layers?
 
-| Aspect | Primary (iFixit/FCC) | Base (multi-search-engine) |
+| Aspect | Primary (teardown/spec sources) | Base (`broad_web_search`) |
 |--------|---------------------|---------------------------|
 | **Data** | Professional teardowns, regulatory specs | User reviews, benchmarks, reliability reports |
 | **Source** | iFixit, FCC, manufacturer | 17 search engines |

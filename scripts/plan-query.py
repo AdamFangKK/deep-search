@@ -18,6 +18,10 @@ def normalize(text: str) -> str:
     return re.sub(r"\s+", " ", text.strip().lower())
 
 
+def contains_cjk(text: str) -> bool:
+    return bool(re.search(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]", text))
+
+
 def score_route(route: dict, query: str) -> tuple[int, list[str]]:
     matched = []
     score = 0
@@ -109,11 +113,16 @@ def resolve_capabilities(
     return resolved
 
 
-def choose_search_mode(intent: str, capabilities: list[dict]) -> str:
+def choose_search_mode(query: str, route: dict, capabilities: list[dict]) -> str:
+    explicit_mode = route.get("search_mode")
+    if explicit_mode:
+        return explicit_mode
+
+    intent = route["intent"]
     capability_names = {item["name"] for item in capabilities if item["status"] in {"READY", "FALLBACK"}}
     if intent in {"news_drama", "community"} and "community_discussion" in capability_names:
         return "news"
-    if intent in {"business", "legal", "hardware"}:
+    if contains_cjk(query):
         return "cn"
     return "general"
 
@@ -153,7 +162,7 @@ def build_plan(query: str, repo_root: Path, platform: str) -> dict:
         "profile": profile_name,
         "min_sources": min_sources,
         "min_domains": min_domains,
-        "search_mode": choose_search_mode(route["intent"], resolved_capabilities),
+        "search_mode": choose_search_mode(query, route, resolved_capabilities),
         "capabilities": resolved_capabilities,
         "evidence_policy": {
             "dedupe_keys": evidence_policy["dedupe"]["primary_keys"],

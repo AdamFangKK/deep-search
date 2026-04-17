@@ -26,6 +26,7 @@ Deep Search is built for the opposite:
 
 - **Local-first**: your workflow lives in your own environment, not inside a closed SaaS box
 - **Multi-source by design**: web, news, academic material, repo/code signals, and supporting specialist skills
+- **Config-driven**: routing, capability resolution, and evidence policy live in machine-readable config, not only prose docs
 - **Research-oriented**: designed for investigation, not just answer generation
 - **Reusable**: packaged as a skill with setup scripts, execution docs, and bundled sub-skills
 - **Composable**: easy to adapt for competitive research, technical research, trend tracking, and content discovery
@@ -42,12 +43,14 @@ Deep Search is built for the opposite:
 ## What You Get
 
 - `SKILL.md`: skill entrypoint and routing rules
-- `DEEP_SEARCH.md`: core execution workflow
-- `DEEP_SEARCH_EXECUTOR.md`: adaptive execution notes
+- `DEEP_SEARCH.md`: stable execution contract
+- `DEEP_SEARCH_EXECUTOR.md`: current execution strategy
 - `scripts/`: setup and environment verification
 - `skills/`: bundled supporting skills
 - `references/`: supporting notes and protocol references
 - `evals/`: evaluation artifacts
+
+Historical drafts and superseded architecture notes live under `docs/archive/` and are not part of the active contract surface.
 
 ## Example Outcome
 
@@ -101,5 +104,7 @@ If you are building serious research agents, this repo gives you a working base 
 ## Current State
 
 This project is actively iterated. The architecture, prompts, and supporting skills will continue to evolve with real-world use.
+
+Some providers are intentionally optional. If host-level skills like `github` or `pdf-text-extractor` are absent, deep-search should degrade through planner-selected fallbacks instead of pretending those capabilities are always available.
 
 If it saves you time, gives you better coverage, or helps you build a stronger research workflow, give it a star.

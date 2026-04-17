@@ -22,12 +22,12 @@ The goal of this split is to keep user-facing behavior stable while allowing int
 
 **当用户请求 deep-search 时，执行以下步骤：**
 
-1. **加载执行器**: 读取 `DEEP_SEARCH.md` - 这是实际的执行入口点
-2. **启动 5-Agent Swarm**: 按照 DEEP_SEARCH.md 中的指令并行启动代理
-3. **渐进式披露**: 执行 Layer 1 → Layer 2 → Layer 3 的数据流
+1. **加载稳定契约**: 读取 `DEEP_SEARCH.md`，确认输出契约、配置边界、适配器边界
+2. **加载执行策略**: 读取 `DEEP_SEARCH_EXECUTOR.md`，采用当前生效的执行策略版本
+3. **先走 planner**: 通过 `scripts/plan-query.py` 生成机器可读 plan，再选择能力与搜索模式
 4. **生成报告**: 输出 8-section 专业报告
 
-**注意**: `SKILL.md` 负责触发和边界，`DEEP_SEARCH.md` 负责稳定执行契约，`DEEP_SEARCH_EXECUTOR.md` 负责实现策略。平台专属调用方式请放在 `adapters/`，不要回灌进核心契约。
+**注意**: `SKILL.md` 负责触发和边界，`DEEP_SEARCH.md` 负责稳定执行契约，`DEEP_SEARCH_EXECUTOR.md` 负责实现策略。真实路由、能力选择、搜索模式以 `config/` 和 `scripts/plan-query.py` 为准。平台专属调用方式请放在 `adapters/`，不要回灌进核心契约。
 
 ---
 
@@ -114,15 +114,15 @@ Current adapter docs:
 
 ## Architecture Overview
 
-### 5-Agent Swarm Architecture
+### Research Swarm Architecture
 
 ```
 Orchestrator (The Conductor)
-    ├─ Global Observer (librarian + multi-search-engine)
+    ├─ Global Observer (broad_web_search capability)
     │   └─ Broad web coverage + official sources
-    ├─ Underground OSINT (librarian + news-aggregator)
+    ├─ Underground OSINT (community_discussion capability)
     │   └─ Reddit + HN + forums (community voices)
-    ├─ Oracle (oracle)
+    ├─ Oracle (reasoning / synthesis lane)
     │   └─ Bias detection + incentive analysis
     ├─ [Vertical Enhancer based on intent]
     │   └─ Domain-specific deep dive
@@ -131,8 +131,8 @@ Orchestrator (The Conductor)
 ```
 
 **Complementary Design**:
-- **Global Observer** uses `multi-search-engine` for **broad web coverage** (blogs, news sites, official docs)
-- **Underground OSINT** uses `websearch_exa` + `news-aggregator` for **community discussions** (Reddit, HN, forums)
+- **Global Observer** uses the `broad_web_search` capability for **broad web coverage** (blogs, news sites, official docs)
+- **Underground OSINT** uses the `community_discussion` capability for **community discussions** (Reddit, HN, forums)
 - They work TOGETHER, not competing — different data layers
 
 ### Agent Reference Docs
@@ -140,12 +140,12 @@ Orchestrator (The Conductor)
 | Agent | Type | Reference | Primary Layer (Depth) | Base Layer (Breadth) |
 |-------|------|-----------|----------------------|---------------------|
 | **Global Observer** | Universal Base | @references/vertical-enhancers/global-observer.md | multi-search-engine (17 engines) | — |
-| **Underground OSINT** | Universal Base | @references/vertical-enhancers/underground-osint.md | websearch_exa + news-aggregator (Reddit/HN) | multi-search-engine (forum expansion) |
-| **Oracle** | Universal Base | @references/vertical-enhancers/oracle.md | oracle (analysis) | multi-search-engine (context gathering) |
-| **Technical Recon** | Vertical | @references/vertical-enhancers/technical-recon.md | explore + ast_grep + github (code deep) | multi-search-engine (ecosystem news) |
+| **Underground OSINT** | Universal Base | @references/vertical-enhancers/underground-osint.md | community_discussion capability | broad_web_search capability |
+| **Oracle** | Universal Base | @references/vertical-enhancers/oracle.md | reasoning / synthesis | broad_web_search capability |
+| **Technical Recon** | Vertical | @references/vertical-enhancers/technical-recon.md | code_intelligence capability | broad_web_search capability |
 | **The Scholar** | Vertical | @references/vertical-enhancers/scholar.md | academic-deep-research (papers) | multi-search-engine (general context) |
 | **Fact Assassin** | Vertical | @references/vertical-enhancers/fact-assassin.md | news-aggregator (curated news) | multi-search-engine (cross-validation) |
-| **Compliance Auditor** | Vertical | @references/vertical-enhancers/compliance-auditor.md | SEC filings + websearch_exa (financials) | multi-search-engine (market sentiment) |
+| **Compliance Auditor** | Vertical | @references/vertical-enhancers/compliance-auditor.md | regulatory and filing sources | broad_web_search capability |
 | **Legal Decoder** | Vertical | @references/vertical-enhancers/legal-decoder.md | Court records + ToS (legal docs) | multi-search-engine (regulatory news) |
 | **Hardware Inspector** | Vertical | @references/vertical-enhancers/hardware-inspector.md | iFixit + benchmarks (teardowns) | multi-search-engine (reviews/reliability) |
 
@@ -165,12 +165,12 @@ Orchestrator (The Conductor)
 #### Specialized Data Sources (Domain Deep Dives)
 | Source | Tool/Skill | Best For | Why Not Replaceable |
 |--------|-----------|----------|-------------------|
-| **Reddit** | `websearch_exa` | Community discussions, user complaints | Authentic grassroots voices |
+| **Reddit / Forums** | `community_discussion` capability | Community discussions, user complaints | Authentic grassroots voices |
 | **HackerNews** | `news-aggregator-skill` | Tech/startup discourse | High signal-to-noise ratio |
 | **Academic** | `academic-deep-research` | Papers, citations, peer review | Structured academic data |
 | **News** | `news-aggregator-skill` | Breaking news, journalist reports | Editorial curation |
-| **GitHub** | `github` | Code repos, issues, PRs | Developer artifacts |
-| **Documents** | `pdf-text-extractor` | PDFs, structured data | Non-web content |
+| **GitHub** | `github` (optional external provider) | Code repos, issues, PRs | Developer artifacts |
+| **Documents** | `pdf-text-extractor` (optional external provider) | PDFs, structured data | Non-web content |
 
 #### Utility Tools
 - Document Processing: @references/tools/document-processing.md
@@ -216,12 +216,12 @@ The Orchestrator (`unspecified-high`) coordinates:
 | paper, research, arxiv | Academic | The Scholar | academic-deep-research (papers, citations) | multi-search-engine (general context) |
 | legal, compliance, GDPR | Legal | Legal Decoder | Court records, ToS (legal docs) | multi-search-engine (regulatory news) |
 | hardware, chip, device | Hardware | Hardware Inspector | iFixit, benchmarks (teardowns) | multi-search-engine (reviews, reliability) |
-| repo, library, API | Code/Tech | Technical Recon | explore, ast_grep, github (code deep) | multi-search-engine (ecosystem news) |
+| repo, library, API | Code/Tech | Technical Recon | code_intelligence capability | broad_web_search capability |
 | breaking news, scandal | News/Drama | Fact Assassin | news-aggregator (curated news) | multi-search-engine (cross-validation) |
 | startup, funding, SEC | Business | Compliance Auditor | SEC filings (financials) | multi-search-engine (market sentiment) |
 | **general query, broad topic** | **Universal** | **Global Observer** | — | **multi-search-engine (17 engines)** |
-| community, complaints, reddit | Grassroots | Underground OSINT | websearch_exa + news-aggregator (Reddit/HN) | multi-search-engine (forum expansion) |
-| incentives, bias, stakeholders | Analysis | Oracle | oracle (reasoning) | multi-search-engine (context gathering) |
+| community, complaints, reddit | Grassroots | Underground OSINT | community_discussion capability | broad_web_search capability |
+| incentives, bias, stakeholders | Analysis | Oracle | reasoning / synthesis | broad_web_search capability |
 
 **Two-Layer Execution**:
 1. **Primary Layer executes first** — domain-specific deep dive

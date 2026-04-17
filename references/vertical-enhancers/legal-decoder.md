@@ -1,6 +1,6 @@
 # The Legal Decoder
 
-**Agent Type**: `librarian`  
+**Execution Surface**: `broad_web_search` + optional `document_processing`  
 **Category**: Vertical Enhancer (Legal topics)  
 **Trigger**: Keywords: legal, compliance, regulation, GDPR, lawsuit, patent, ToS
 
@@ -20,22 +20,21 @@ Legal document parsing and compliance:
 ## Two-Layer Tool Stack
 
 ### Primary Layer (Legal Deep Dive)
-**Tools**:
-- Direct document fetching — Court filings, ToS, Privacy Policy
-- `websearch_exa` — Legal databases, PACER, regulatory guidance
+**Capabilities**:
+- `broad_web_search` for authoritative legal sources and official documents
+- optional `document_processing` when PDFs or structured filings must be extracted
 
 **Irreplaceable because**: Only direct access to legal documents provides authoritative text.
 
-```bash
-# Primary Layer: Legal documents and case law
-webfetch "https://[company].com/terms"
-webfetch "https://[company].com/privacy"
-websearch_exa "[topic] lawsuit court filing PACER"
-websearch_exa "[statute] Section [X] legal analysis site:courtlistener.com"
+```text
+Primary Layer examples:
+- official ToS / privacy policy
+- court filings and regulatory guidance
+- statute-specific commentary from authoritative sources
 ```
 
 ### Base Layer (Regulatory Context)
-**Tool**: `multi-search-engine` (17 engines)
+**Capability**: `broad_web_search`
 - **Purpose**: Gather regulatory news, enforcement trends, industry compliance discussions
 - **Activation**: For:
   - "[regulation] enforcement action 2024"
@@ -144,7 +143,7 @@ bash ~/.agents/skills/deep-search/scripts/swarm-search.sh \
 
 ## Why Two Layers?
 
-| Aspect | Primary (Legal Docs) | Base (multi-search-engine) |
+| Aspect | Primary (Legal docs / optional extraction) | Base (`broad_web_search`) |
 |--------|---------------------|---------------------------|
 | **Data** | Statutes, contracts, court rulings | Regulatory news, expert analysis, trends |
 | **Source** | Government databases, company sites | 17 search engines |

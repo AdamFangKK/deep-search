@@ -1,6 +1,6 @@
 # The Compliance Auditor
 
-**Agent Type**: `librarian`  
+**Execution Surface**: `broad_web_search` + optional `document_processing`  
 **Category**: Vertical Enhancer (Business topics)  
 **Trigger**: Keywords: startup, funding, valuation, SEC, compliance, financial
 
@@ -20,21 +20,21 @@ Business and financial due diligence:
 ## Two-Layer Tool Stack
 
 ### Primary Layer (Financial Deep Dive)
-**Tools**:
-- `websearch_exa` — SEC EDGAR database, regulatory filings
-- Direct document fetching — 10-K, 10-Q, S-1 filings
+**Capabilities**:
+- `broad_web_search` for SEC filings, official disclosures, regulatory coverage
+- optional `document_processing` for extracted filings and statements
 
 **Irreplaceable because**: Only direct SEC access provides legally-required disclosures.
 
-```bash
-# Primary Layer: SEC and regulatory deep dive
-websearch_exa "[company] SEC filing 10-K 10-Q site:sec.gov"
-websearch_exa "[company] annual report 20-F"  # For foreign companies
-webfetch "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=[CIK]"
+```text
+Primary Layer examples:
+- SEC EDGAR filing lookup
+- annual report / 20-F / S-1 discovery
+- official regulator disclosures
 ```
 
 ### Base Layer (Market Context)
-**Tool**: `multi-search-engine` (17 engines)
+**Capability**: `broad_web_search`
 - **Purpose**: Gather market sentiment, news analysis, investor discussions
 - **Activation**: For:
   - "[company] stock analysis investment thesis"
@@ -130,7 +130,7 @@ Risk assessment with primary sources and market context:
 
 ## Why Two Layers?
 
-| Aspect | Primary (SEC/filings) | Base (multi-search-engine) |
+| Aspect | Primary (SEC/filings) | Base (`broad_web_search`) |
 |--------|----------------------|---------------------------|
 | **Data** | Hard financials, legal disclosures | Market sentiment, news analysis |
 | **Source** | Government regulatory database | 17 search engines |

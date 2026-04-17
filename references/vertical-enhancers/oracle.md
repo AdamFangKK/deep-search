@@ -1,6 +1,6 @@
 # The Oracle
 
-**Agent Type**: `oracle`  
+**Execution Surface**: reasoning / synthesis lane  
 **Category**: Universal Base Agent (Always Run)  
 **Trigger**: ALL searches
 
@@ -19,13 +19,13 @@ Decode hidden incentives and power structures:
 ## Two-Layer Tool Stack
 
 ### Primary Layer (Analysis Core)
-**Tool**: `oracle` agent (reasoning-only, no external search)
+**Mode**: reasoning-only synthesis
 - Synthesizes findings from other agents
 - Detects logical fallacies and bias patterns
 - Maps stakeholder incentives
 
 ### Base Layer (Context Gathering)
-**Tool**: `multi-search-engine` (17 engines)
+**Capability**: `broad_web_search`
 - **Purpose**: Gather broad context on stakeholders, funding history, market position
 - **Activation**: When analyzing a company/topic, first use multi-search-engine for background
 - **Complements**: Other agents' specialized findings provide depth, multi-search-engine provides breadth

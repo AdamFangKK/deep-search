@@ -1,6 +1,6 @@
 # The Global Observer
 
-**Agent Type**: `librarian`  
+**Execution Surface**: `broad_web_search` capability  
 **Category**: Universal Base Agent (Always Run)  
 **Trigger**: ALL searches
 
@@ -15,15 +15,15 @@ Gather foundational facts from **broad web coverage**:
 - General web context
 
 **Complementary Design**:
-- **Global Observer** uses `multi-search-engine` for **broad web coverage** (17 engines)
-- **Underground OSINT** uses `websearch_exa` for **Reddit/HN** community discussions
+- **Global Observer** uses `broad_web_search` for **broad web coverage**
+- **Underground OSINT** uses `community_discussion` for **community discussions**
 - **They work TOGETHER** — different data layers, no duplication
 
 ---
 
 ## Tools & Commands
 
-### Primary: Multi-Search Engine (17 engines)
+### Primary: Broad Web Search
 
 ```bash
 # Launch broad web search across engines
@@ -36,12 +36,10 @@ bash ~/.agents/skills/deep-search/scripts/swarm-search.sh "[topic]" cn
 bash ~/.agents/skills/deep-search/scripts/swarm-search.sh "[topic]" news
 ```
 
-### Supplementary: Exa AI (for specific site targets)
+### Supplementary: Planner-Selected Provider
 
-```bash
-# When multi-search-engine needs targeting
-websearch_exa "[topic] official documentation"
-```
+Use the provider resolved for `broad_web_search`.
+Do not assume a host-specific primitive from this file.
 
 ---
 
@@ -106,9 +104,9 @@ After completing research, Global Observer MUST:
 
 ## Why Not Replace Underground OSINT?
 
-| Aspect | Global Observer (multi-search-engine) | Underground OSINT (websearch_exa) |
+| Aspect | Global Observer (`broad_web_search`) | Underground OSINT (`community_discussion`) |
 |--------|--------------------------------------|----------------------------------|
-| **Sources** | Official docs, news, blogs | Reddit, HN, forums, Twitter |
+| **Sources** | Official docs, news, blogs | Reddit, HN, forums, social/community surfaces |
 | **Voice** | Institutional, PR, official | Grassroots, complaints, real UX |
 | **Use case** | "What they say" | "What users actually experience" |
 | **Overlap?** | NO — distinct data layers | NO — distinct data layers |
@@ -119,5 +117,5 @@ After completing research, Global Observer MUST:
 
 ## References
 
-- **Multi-Search Engine Guide**: @references/tools/multi-search.md
+- **Search Capability Guide**: @references/tools/multi-search.md
 - **Underground OSINT**: @references/vertical-enhancers/underground-osint.md

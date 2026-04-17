@@ -1,6 +1,6 @@
 # The Technical Recon
 
-**Agent Type**: `explore` + `ast_grep_search` + `github`  
+**Execution Surface**: `code_intelligence` capability + local code analysis  
 **Category**: Vertical Enhancer (Code/Tech topics)  
 **Trigger**: Keywords: repo, library, framework, API, code
 
@@ -20,15 +20,14 @@ Deep technical reconnaissance:
 ## Two-Layer Tool Stack
 
 ### Primary Layer (Code Deep Dive)
-**Tools**: 
-- `github` skill — Repository data, Issues, PRs, CI
-- `explore` agent — Codebase structure analysis
-- `ast_grep_search` — Pattern-based code search
+**Tools / capabilities**:
+- `code_intelligence` capability — repository metadata, issues, PRs when available
+- local code analysis — file structure, symbols, AST search
 
-**Irreplaceable because**: Only these tools can access GitHub API, parse code AST, analyze repository internals.
+**Note**: `code_intelligence` may depend on an optional external provider. If absent, fall back to local analysis + `broad_web_search`.
 
 ### Base Layer (Ecosystem Context)
-**Tool**: `multi-search-engine` (17 engines)
+**Capability**: `broad_web_search`
 - **Purpose**: Gather ecosystem news, adoption trends, community discussions outside GitHub
 - **Activation**: After code analysis, use for:
   - "[library] production use cases"
@@ -37,9 +36,9 @@ Deep technical reconnaissance:
   - "[technology] deprecation announcement"
 
 ```bash
-# Primary Layer: Deep code analysis
-gh issue list --repo owner/repo --limit 20
-ast_grep_search -p "useState" --lang typescript
+# Primary Layer examples
+# - repository issue/PR inspection via code_intelligence when available
+# - local symbol or AST analysis
 
 # Base Layer: Ecosystem context
 bash ~/.agents/skills/deep-search/scripts/swarm-search.sh \
@@ -98,7 +97,7 @@ bash ~/.agents/skills/deep-search/scripts/swarm-search.sh \
 
 ## Why Two Layers?
 
-| Aspect | Primary (Code Tools) | Base (multi-search-engine) |
+| Aspect | Primary (`code_intelligence` + local analysis) | Base (`broad_web_search`) |
 |--------|---------------------|---------------------------|
 | **Data** | Repo stats, code patterns, Issues | News, blogs, benchmarks, case studies |
 | **Question** | "What IS the code?" | "How is it USED in production?" |
