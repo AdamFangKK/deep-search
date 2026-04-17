@@ -14,7 +14,7 @@ The following files are the stable non-breaking contract layer:
 - `contracts/evidence-schema.json`
 - `config/capability-registry.json`
 - `config/execution-profiles.json`
-- `evals/baseline-queries.v1.json`
+- `config/query-routing.json`
 
 This file owns the execution contract. It should not silently redefine the report shape or provider semantics without updating those contract files.
 

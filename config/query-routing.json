@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "description": "Intent routing table for deep-search domain selection",
+  "default_route": {
+    "intent": "universal",
+    "primary_agent": "Global Observer",
+    "primary_capabilities": ["broad_web_search"],
+    "secondary_capabilities": ["community_discussion"],
+    "min_sources": 5,
+    "min_domains": 3
+  },
+  "routes": [
+    {
+      "intent": "academic",
+      "keywords": ["paper", "research", "arxiv", "citation", "literature"],
+      "primary_agent": "The Scholar",
+      "primary_capabilities": ["academic_research", "broad_web_search"],
+      "secondary_capabilities": ["community_discussion"],
+      "min_sources": 8,
+      "min_domains": 4
+    },
+    {
+      "intent": "legal",
+      "keywords": ["legal", "compliance", "gdpr", "regulation", "lawsuit"],
+      "primary_agent": "Legal Decoder",
+      "primary_capabilities": ["broad_web_search", "document_processing"],
+      "secondary_capabilities": [],
+      "min_sources": 6,
+      "min_domains": 3
+    },
+    {
+      "intent": "hardware",
+      "keywords": ["hardware", "chip", "device", "teardown", "benchmark"],
+      "primary_agent": "Hardware Inspector",
+      "primary_capabilities": ["broad_web_search", "document_processing"],
+      "secondary_capabilities": ["community_discussion"],
+      "min_sources": 6,
+      "min_domains": 3
+    },
+    {
+      "intent": "code_tech",
+      "keywords": ["repo", "library", "api", "framework", "sdk", "open source"],
+      "primary_agent": "Technical Recon",
+      "primary_capabilities": ["code_intelligence", "broad_web_search"],
+      "secondary_capabilities": ["community_discussion"],
+      "min_sources": 6,
+      "min_domains": 3
+    },
+    {
+      "intent": "news_drama",
+      "keywords": ["breaking news", "announcement", "controversy", "scandal", "rumor"],
+      "primary_agent": "Fact Assassin",
+      "primary_capabilities": ["community_discussion", "broad_web_search"],
+      "secondary_capabilities": [],
+      "min_sources": 6,
+      "min_domains": 3
+    },
+    {
+      "intent": "business",
+      "keywords": ["startup", "funding", "sec", "pricing", "business model", "valuation"],
+      "primary_agent": "Compliance Auditor",
+      "primary_capabilities": ["broad_web_search", "document_processing"],
+      "secondary_capabilities": ["community_discussion"],
+      "min_sources": 6,
+      "min_domains": 3
+    },
+    {
+      "intent": "community",
+      "keywords": ["reddit", "complaints", "community", "users say", "feedback"],
+      "primary_agent": "Underground OSINT",
+      "primary_capabilities": ["community_discussion", "broad_web_search"],
+      "secondary_capabilities": [],
+      "min_sources": 5,
+      "min_domains": 3
+    },
+    {
+      "intent": "analysis",
+      "keywords": ["bias", "incentives", "stakeholders", "narrative", "agenda"],
+      "primary_agent": "Oracle",
+      "primary_capabilities": ["broad_web_search"],
+      "secondary_capabilities": ["community_discussion"],
+      "min_sources": 5,
+      "min_domains": 3
+    }
+  ]
+}

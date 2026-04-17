@@ -10,12 +10,11 @@ echo "🧪 Deep-Search Contract Verification"
 echo "=================================="
 
 required_files=(
-  "$ROOT_DIR/docs/architecture-stabilization-spec.md"
   "$ROOT_DIR/contracts/output-contract.md"
   "$ROOT_DIR/contracts/evidence-schema.json"
   "$ROOT_DIR/config/capability-registry.json"
   "$ROOT_DIR/config/execution-profiles.json"
-  "$ROOT_DIR/evals/baseline-queries.v1.json"
+  "$ROOT_DIR/config/query-routing.json"
 )
 
 for file in "${required_files[@]}"; do
@@ -38,7 +37,7 @@ json_files = [
     root / "contracts/evidence-schema.json",
     root / "config/capability-registry.json",
     root / "config/execution-profiles.json",
-    root / "evals/baseline-queries.v1.json",
+    root / "config/query-routing.json",
 ]
 
 for path in json_files:
@@ -51,6 +50,7 @@ echo ""
 echo "🔗 Reference Checks:"
 grep -q "contracts/output-contract.md" "$ROOT_DIR/SKILL.md" && echo "✅ SKILL.md references output contract" || { echo "❌ SKILL.md missing output contract reference"; exit 1; }
 grep -q "config/capability-registry.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references capability registry" || { echo "❌ DEEP_SEARCH.md missing capability registry reference"; exit 1; }
+grep -q "config/query-routing.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references query routing config" || { echo "❌ DEEP_SEARCH.md missing query routing reference"; exit 1; }
 grep -q "contracts/evidence-schema.json" "$ROOT_DIR/DEEP_SEARCH_EXECUTOR.md" && echo "✅ DEEP_SEARCH_EXECUTOR.md references evidence schema" || { echo "❌ DEEP_SEARCH_EXECUTOR.md missing evidence schema reference"; exit 1; }
 
 echo ""
