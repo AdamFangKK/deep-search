@@ -32,6 +32,8 @@ Recommended search entrypoint when using a generated plan:
 bash scripts/swarm-search.sh --plan /path/to/plan.json
 ```
 
+If a host platform uses platform-specific worker primitives, document that in `adapters/<platform>/README.md` instead of embedding the syntax into the core executor contract.
+
 ## 测试验证的权限边界
 
 ### ✅ 已验证的能力

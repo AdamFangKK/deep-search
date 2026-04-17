@@ -10,6 +10,7 @@ version: 6.0.0
 
 The following files are the stable non-breaking contract layer:
 
+- `contracts/runtime-contract.md`
 - `contracts/output-contract.md`
 - `contracts/evidence-schema.json`
 - `config/capability-registry.json`
@@ -18,6 +19,8 @@ The following files are the stable non-breaking contract layer:
 - `config/query-routing.json`
 
 This file owns the execution contract. It should not silently redefine the report shape or provider semantics without updating those contract files.
+
+Platform-specific worker syntax and host orchestration details should live under `adapters/`, not here.
 
 ## Contract-Driven Execution Flow
 
@@ -38,6 +41,11 @@ The execution contract should follow this order:
    - `contracts/output-contract.md`
 
 This keeps the skill functional and extensible without pushing internal engineering workflow into the repo surface.
+
+Host-specific examples should be documented in:
+
+- `adapters/opencode/README.md`
+- `adapters/codex/README.md`
 
 ## Functional Routing Rules
 

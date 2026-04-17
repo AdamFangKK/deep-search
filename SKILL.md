@@ -11,6 +11,7 @@ version: 4.0.0
 - `SKILL.md`: trigger surface and user-visible invocation rules
 - `DEEP_SEARCH.md`: stable execution contract
 - `DEEP_SEARCH_EXECUTOR.md`: adaptive executor strategy
+- `contracts/runtime-contract.md`: platform-neutral runtime semantics
 - `contracts/output-contract.md`: frozen user-facing report shape
 - `contracts/evidence-schema.json`: normalized evidence contract
 - `config/capability-registry.json`: provider inventory and fallback order
@@ -26,7 +27,7 @@ The goal of this split is to keep user-facing behavior stable while allowing int
 3. **渐进式披露**: 执行 Layer 1 → Layer 2 → Layer 3 的数据流
 4. **生成报告**: 输出 8-section 专业报告
 
-**注意**: `SKILL.md` 负责触发和边界，`DEEP_SEARCH.md` 负责稳定执行契约，`DEEP_SEARCH_EXECUTOR.md` 负责实现策略。OpenCode 在调用 skill 时会自动处理此流程。
+**注意**: `SKILL.md` 负责触发和边界，`DEEP_SEARCH.md` 负责稳定执行契约，`DEEP_SEARCH_EXECUTOR.md` 负责实现策略。平台专属调用方式请放在 `adapters/`，不要回灌进核心契约。
 
 ---
 
@@ -85,6 +86,19 @@ bash ~/.agents/skills/deep-search/scripts/check-tools.sh
 # Run deep search
 /deep-search "your research topic"
 ```
+
+## Platform Portability
+
+`deep-search` should be understood as a portable research core plus platform adapters:
+
+- core contracts live in `contracts/` and `config/`
+- execution surfaces live in `scripts/`
+- platform-specific guidance lives in `adapters/`
+
+Current adapter docs:
+
+- `adapters/opencode/README.md`
+- `adapters/codex/README.md`
 
 ## When to Use
 

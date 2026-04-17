@@ -10,6 +10,7 @@ echo "🧪 Deep-Search Contract Verification"
 echo "=================================="
 
 required_files=(
+  "$ROOT_DIR/contracts/runtime-contract.md"
   "$ROOT_DIR/contracts/output-contract.md"
   "$ROOT_DIR/contracts/evidence-schema.json"
   "$ROOT_DIR/config/capability-registry.json"
@@ -17,6 +18,8 @@ required_files=(
   "$ROOT_DIR/config/execution-profiles.json"
   "$ROOT_DIR/config/query-routing.json"
   "$ROOT_DIR/scripts/plan-query.py"
+  "$ROOT_DIR/adapters/opencode/README.md"
+  "$ROOT_DIR/adapters/codex/README.md"
 )
 
 for file in "${required_files[@]}"; do
@@ -51,10 +54,13 @@ PY
 
 echo ""
 echo "🔗 Reference Checks:"
+grep -q "contracts/runtime-contract.md" "$ROOT_DIR/SKILL.md" && echo "✅ SKILL.md references runtime contract" || { echo "❌ SKILL.md missing runtime contract reference"; exit 1; }
 grep -q "contracts/output-contract.md" "$ROOT_DIR/SKILL.md" && echo "✅ SKILL.md references output contract" || { echo "❌ SKILL.md missing output contract reference"; exit 1; }
+grep -q "adapters/opencode/README.md" "$ROOT_DIR/SKILL.md" && echo "✅ SKILL.md references adapter docs" || { echo "❌ SKILL.md missing adapter doc reference"; exit 1; }
 grep -q "config/capability-registry.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references capability registry" || { echo "❌ DEEP_SEARCH.md missing capability registry reference"; exit 1; }
 grep -q "config/evidence-policy.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references evidence policy" || { echo "❌ DEEP_SEARCH.md missing evidence policy reference"; exit 1; }
 grep -q "config/query-routing.json" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references query routing config" || { echo "❌ DEEP_SEARCH.md missing query routing reference"; exit 1; }
+grep -q "adapters/" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md defers host syntax to adapters" || { echo "❌ DEEP_SEARCH.md missing adapter deferral"; exit 1; }
 grep -q "contracts/evidence-schema.json" "$ROOT_DIR/DEEP_SEARCH_EXECUTOR.md" && echo "✅ DEEP_SEARCH_EXECUTOR.md references evidence schema" || { echo "❌ DEEP_SEARCH_EXECUTOR.md missing evidence schema reference"; exit 1; }
 grep -q "scripts/plan-query.py" "$ROOT_DIR/DEEP_SEARCH.md" && echo "✅ DEEP_SEARCH.md references planner entrypoint" || { echo "❌ DEEP_SEARCH.md missing planner entrypoint"; exit 1; }
 
