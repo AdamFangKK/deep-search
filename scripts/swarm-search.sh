@@ -51,14 +51,15 @@ fi
 
 # URL encode query
 ENCODED_QUERY=$(echo "$QUERY" | sed 's/ /+/g; s/:/%3A/g; s/\//%2F/g')
+USER_AGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
 # Engine definitions
 ENGINES_GENERAL=(
-  "google:https://www.google.com/search?q=$ENCODED_QUERY"
   "bing_int:https://cn.bing.com/search?q=$ENCODED_QUERY&ensearch=1"
-  "ddg:https://duckduckgo.com/html/?q=$ENCODED_QUERY"
+  "ddg:https://html.duckduckgo.com/html/?q=$ENCODED_QUERY"
   "startpage:https://www.startpage.com/sp/search?query=$ENCODED_QUERY"
   "brave:https://search.brave.com/search?q=$ENCODED_QUERY"
+  "yahoo:https://search.yahoo.com/search?p=$ENCODED_QUERY"
 )
 
 ENGINES_CN=(
@@ -69,21 +70,99 @@ ENGINES_CN=(
 )
 
 ENGINES_NEWS=(
-  "google_news:https://www.google.com/search?q=$ENCODED_QUERY&tbs=qdr:w"
   "bing_news:https://cn.bing.com/search?q=$ENCODED_QUERY&ensearch=1&filters=ex1%3a%22ez5_1825%22"
   "yahoo:https://search.yahoo.com/search?p=$ENCODED_QUERY"
+  "brave:https://search.brave.com/search?q=$ENCODED_QUERY"
+  "startpage:https://www.startpage.com/sp/search?query=$ENCODED_QUERY"
 )
+
+fetch_engine() {
+  local engine_name="$1"
+  local engine_url="$2"
+  local output_file="$3"
+  local status_file="$4"
+  local http_code=""
+  local effective_url=""
+  local attempt=1
+
+  is_placeholder_page() {
+    python3 - "$1" <<'PY'
+from bs4 import BeautifulSoup
+from pathlib import Path
+import sys
+text = BeautifulSoup(Path(sys.argv[1]).read_text(errors='ignore'), 'html.parser').get_text(' ', strip=True).lower()
+phrases = [
+    'please click here if you are not redirected',
+    'enable javascript to continue',
+]
+raise SystemExit(0 if any(p in text for p in phrases) else 1)
+PY
+  }
+
+  while [ "$attempt" -le 2 ]; do
+    local response
+    response=$(curl -sS -L --compressed \
+      -A "$USER_AGENT" \
+      -H "Accept-Language: en-US,en;q=0.9" \
+      --connect-timeout 10 \
+      --max-time 30 \
+      -o "$output_file" \
+      -w "%{http_code} %{url_effective}" \
+      "$engine_url" 2>/dev/null || true)
+
+    http_code=$(printf '%s' "$response" | awk '{print $1}')
+    effective_url=$(printf '%s' "$response" | cut -d' ' -f2-)
+
+    if [ "$http_code" = "200" ] && [ -s "$output_file" ]; then
+      if is_placeholder_page "$output_file"; then
+        http_code="302"
+      else
+        printf '{"http_code":"%s","effective_url":"%s","attempt":%s}\n' \
+          "$http_code" "$effective_url" "$attempt" > "$status_file"
+        return 0
+      fi
+    fi
+
+    attempt=$((attempt + 1))
+    sleep 1
+  done
+
+  printf '{"http_code":"%s","effective_url":"%s","attempt":%s}\n' \
+    "${http_code:-000}" "${effective_url:-}" $((attempt - 1)) > "$status_file"
+  return 1
+}
+
+unique_engines() {
+  python3 - <<'PY' "$@"
+import sys
+
+seen = set()
+for engine in sys.argv[1:]:
+    name = engine.split(':', 1)[0]
+    if name in seen:
+        continue
+    seen.add(name)
+    print(engine)
+PY
+}
+
+load_engines() {
+  ENGINES=()
+  while IFS= read -r line; do
+    [ -n "$line" ] && ENGINES+=("$line")
+  done < <(unique_engines "$@")
+}
 
 # Select engine set based on mode
 case "$MODE" in
   cn)
-    ENGINES=("${ENGINES_CN[@]}" "${ENGINES_GENERAL[@]:0:3}")
+    load_engines "${ENGINES_CN[@]}" "${ENGINES_GENERAL[@]:0:3}"
     ;;
   news)
-    ENGINES=("${ENGINES_NEWS[@]}" "${ENGINES_GENERAL[@]:0:3}")
+    load_engines "${ENGINES_NEWS[@]}" "${ENGINES_GENERAL[@]:0:3}"
     ;;
   *)
-    ENGINES=("${ENGINES_GENERAL[@]}")
+    load_engines "${ENGINES_GENERAL[@]}"
     ;;
 esac
 
@@ -110,16 +189,19 @@ for engine_def in "${ENGINES[@]}"; do
     *) sleep 1 ;;
   esac
   
-  # Execute search
-  HTTP_CODE=$(curl -s -o "$RESULTS_DIR/${ENGINE_NAME}.html" -w "%{http_code}" \
-    -A "Mozilla/5.0 (compatible; DeepSearch/1.0)" \
-    --max-time 30 \
-    "$ENGINE_URL" 2>/dev/null)
-  
-  if [ "$HTTP_CODE" = "200" ]; then
+  STATUS_FILE="$RESULTS_DIR/${ENGINE_NAME}.json"
+
+  # Execute search with redirect handling and a lightweight validity check.
+  if fetch_engine "$ENGINE_NAME" "$ENGINE_URL" "$RESULTS_DIR/${ENGINE_NAME}.html" "$STATUS_FILE"; then
     echo "✅ ($(wc -c < "$RESULTS_DIR/${ENGINE_NAME}.html") bytes)"
     SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
   else
+    HTTP_CODE=$(python3 - "$STATUS_FILE" <<'PY'
+import json, sys
+with open(sys.argv[1]) as fh:
+    print(json.load(fh).get("http_code", "000"))
+PY
+)
     echo "❌ (HTTP $HTTP_CODE)"
     FAIL_COUNT=$((FAIL_COUNT + 1))
     rm -f "$RESULTS_DIR/${ENGINE_NAME}.html"
