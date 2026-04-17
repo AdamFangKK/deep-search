@@ -4,7 +4,7 @@
     "name": "Local"
   },
   "metadata": {
-    "description": "Deep search skill for exhaustive multi-faceted research"
+    "description": "Multi-platform deep research skill for exhaustive multi-faceted investigation"
   },
   "plugins": [
     {
@@ -13,7 +13,7 @@
         "source": "path",
         "path": "."
       },
-      "description": "Deep multi-faceted research with 5-agent swarm architecture",
+      "description": "Portable multi-platform deep research with stable contracts, adapters, and strict-mode auditing",
       "version": "4.0.0"
     }
   ]

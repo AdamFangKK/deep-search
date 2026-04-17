@@ -3,7 +3,7 @@
 # ==============================================================================
 # Deep-Search V4: "Batteries-Included" Dependency Installer
 # Automatically detects OS and installs required ecosystem dependencies
-# Checks for OpenCode MCPs and Meta-Skill prerequisites
+# Checks for multi-platform prerequisites and optional host-specific integrations
 # ==============================================================================
 
 echo "🚀 Bootstrapping Deep-Search V4 Environment..."
@@ -60,8 +60,8 @@ echo "📁 Phase 4: Initializing Sandboxes..."
 mkdir -p /tmp/omo-deep-search/
 chmod 777 /tmp/omo-deep-search/
 
-# 5. OpenCode Meta-Dependencies (Skills & MCPs)
-echo "🤖 Phase 5: Verifying OpenCode Skills & MCPs..."
+# 5. Host Integrations (Skills & MCPs)
+echo "🤖 Phase 5: Verifying shared skills and optional host integrations..."
 echo "------------------------------------------------------"
 echo "✅ RECOMMENDED SkillHub Skills (开箱即用):"
 echo ""

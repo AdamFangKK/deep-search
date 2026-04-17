@@ -1,6 +1,6 @@
 ---
 name: deep-search
-description: Use when the user explicitly requests /deep-search <topic>, uses [search-mode] MAXIMIZE SEARCH EFFORT, or requires deep, multi-faceted research with exhaustive coverage and empirical validation. Triggers saturation search protocol with 5+ specialized agents.
+description: Multi-platform deep research skill for exhaustive, multi-faceted investigation with config-driven routing, portable adapters, and auditable strict mode.
 version: 4.0.0
 ---
 
@@ -77,7 +77,7 @@ bash ~/.agents/skills/deep-search/setup.sh
 # Check environment
 bash ~/.agents/skills/deep-search/scripts/check-tools.sh
 
-# Run deep search (通过 OpenCode 调用)
+# Run deep search (通过任意受支持宿主调用)
 # /deep-search "your research topic"
 ```
 
@@ -85,7 +85,7 @@ bash ~/.agents/skills/deep-search/scripts/check-tools.sh
 
 # /deep-search Command (v4.0: Architecturally Optimized)
 
-This command triggers "Max-Search Mode" (Saturation Search Protocol) for exhaustive, zero-blind-spot research governed by strict Ultrawork protocols.
+This command triggers a multi-platform "Max-Search Mode" for exhaustive, zero-blind-spot research governed by stable contracts, config-driven routing, and host adapters.
 
 ## Quick Start
 
@@ -118,6 +118,8 @@ Current adapter docs:
 - `adapters/claude-code/README.md`
 - `adapters/hermes/README.md`
 - `adapters/openclaw/README.md`
+
+It is not an OpenCode-only or Claude-only workflow surface. The skill is designed to keep the core contract portable and push host-specific behavior into adapters.
 
 ## When to Use
 

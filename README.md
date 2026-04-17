@@ -1,6 +1,6 @@
 # Deep Search
 
-**Deep Search is a local-first deep research skill for people who are tired of shallow summaries.**
+**Deep Search is a local-first, multi-platform deep research skill for people who are tired of shallow summaries.**
 
 It turns one prompt into a serious investigation workflow: broad search, news aggregation, academic lookup, code and repo signals, cross-validation, and structured synthesis.
 
@@ -27,6 +27,7 @@ Deep Search is built for the opposite:
 - **Local-first**: your workflow lives in your own environment, not inside a closed SaaS box
 - **Multi-source by design**: web, news, academic material, repo/code signals, and supporting specialist skills
 - **Config-driven**: routing, capability resolution, and evidence policy live in machine-readable config, not only prose docs
+- **Multi-platform**: the core contract is portable across Codex, Claude Code, Hermes, OpenCode, OpenClaw, and other skill-capable hosts via adapters
 - **Research-oriented**: designed for investigation, not just answer generation
 - **Reusable**: packaged as a skill with setup scripts, execution docs, and bundled sub-skills
 - **Composable**: easy to adapt for competitive research, technical research, trend tracking, and content discovery
