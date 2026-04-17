@@ -46,6 +46,9 @@ Host-specific examples should be documented in:
 
 - `adapters/opencode/README.md`
 - `adapters/codex/README.md`
+- `adapters/claude-code/README.md`
+- `adapters/hermes/README.md`
+- `adapters/openclaw/README.md`
 
 ## Functional Routing Rules
 

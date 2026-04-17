@@ -20,6 +20,9 @@ required_files=(
   "$ROOT_DIR/scripts/plan-query.py"
   "$ROOT_DIR/adapters/opencode/README.md"
   "$ROOT_DIR/adapters/codex/README.md"
+  "$ROOT_DIR/adapters/claude-code/README.md"
+  "$ROOT_DIR/adapters/hermes/README.md"
+  "$ROOT_DIR/adapters/openclaw/README.md"
 )
 
 for file in "${required_files[@]}"; do

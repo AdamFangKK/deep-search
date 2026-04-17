@@ -99,6 +99,9 @@ Current adapter docs:
 
 - `adapters/opencode/README.md`
 - `adapters/codex/README.md`
+- `adapters/claude-code/README.md`
+- `adapters/hermes/README.md`
+- `adapters/openclaw/README.md`
 
 ## When to Use
 
